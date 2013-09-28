@@ -22,6 +22,11 @@ public class MainActivity extends Activity {
 		
 		final IntentFilter iF = new IntentFilter();
 		iF.addAction("com.android.music.metachanged");
+		iF.addAction("com.htc.music.metachanged");
+		iF.addAction("com.andrew.apollo.metachanged");
+		
+		iF.addAction("com.rdio.android.metachanged");
+		iF.addAction("com.nullsoft.winamp.metachanged");
 
 		registerReceiver(mReceiver, iF);
 	}
