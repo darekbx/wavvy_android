@@ -52,7 +52,6 @@ public class IntentReceiver extends BaseContext {
 
 				final Track track = IntentReceiver.this.mScrobbler.parseTrack(intent.getExtras());
 				IntentReceiver.this.mTrackReceived.TrackReceived(track);
-				
 			} 
 			catch (Exception e) {
 				

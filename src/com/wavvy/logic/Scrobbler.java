@@ -21,6 +21,9 @@ public class Scrobbler extends BaseContext {
 	
 	public Track parseTrack(final Bundle bundle) {
 		
+		if (bundle == null)
+			return null;
+		
 		final long audioid = this.getAudioId(bundle);
 		Track track = null;
 		
@@ -41,7 +44,6 @@ public class Scrobbler extends BaseContext {
 	private long getAudioId(final Bundle bundle) {
 
 		final Object idBundle = bundle.get(getString(R.string.receiver_id_key));
-		
 		long id = NO_AUDIO_ID;
 		
 		if (idBundle != null) {
