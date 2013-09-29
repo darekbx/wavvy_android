@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="receiver_id_key">id</string>
+    <string name="receiver_artist_key">artist</string>
+    <string name="receiver_album_key">album</string>
+    <string name="receiver_track_key">track</string>
+</resources>
