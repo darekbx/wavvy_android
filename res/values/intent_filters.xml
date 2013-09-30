@@ -4,7 +4,5 @@
         <item>com.android.music.metachanged</item>
         <item>com.htc.music.metachanged</item>
         <item>com.andrew.apollo.metachanged</item>
-        <item>com.nullsoft.winamp.metachanged</item>
-        <item>com.rdio.android.metachanged</item>
     </string-array>
 </resources>
