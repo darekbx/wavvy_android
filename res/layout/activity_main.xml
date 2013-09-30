@@ -1,12 +1,42 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-    <ListView
-        android:id="@+id/list"
+    <TableRow
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+        <Button
+            android:id="@+id/button_songs"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="@string/menu_songs" />
+        <Button
+            android:id="@+id/button_map"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="@string/menu_map" />
+    </TableRow>
 
-</RelativeLayout>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+        <Button
+            android:id="@+id/button_me"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="@string/menu_me" />
+        <Button
+            android:id="@+id/button_exit"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="@string/menu_exit" />
+    </TableRow>
+
+</TableLayout>

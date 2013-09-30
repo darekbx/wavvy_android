@@ -1,19 +1,16 @@
 package com.wavvy;
 
-import com.wavvy.listeners.TrackReceivedListener;
-import com.wavvy.logic.IntentReceiver;
-import com.wavvy.model.Track;
-
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.app.Activity;
+import android.content.Intent;
+
 public class MainActivity extends Activity {
 
-	private IntentReceiver mIntentReceiver;
-	
-	private ArrayAdapter<String> mAdapter;
-	private ListView mList;
+	private Button mSongsButton;
+	private Button mExitButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,36 +18,45 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		this.setContentView(R.layout.activity_main);
-
-		this.mList = (ListView)this.findViewById(R.id.list);
-		this.mAdapter = new ArrayAdapter<String>(this, R.layout.list_row);
-		this.mList.setAdapter(this.mAdapter);
-		
-		this.mIntentReceiver = new IntentReceiver(this);
-		this.mIntentReceiver.setOnTrackReceivedListener(new TrackReceivedListener() {
-			
-			@Override
-			public void TrackReceived(Track track) {
-
-				MainActivity.this.append(String.valueOf(track));
-			}
-		});
-		this.mIntentReceiver.register();
+		this.registerListeners();
 	}
 	
 	@Override
 	protected void onDestroy() {
 		
-		super.onDestroy();
+		this.mExitButton.setOnClickListener(null);
+		this.mSongsButton.setOnClickListener(null);
 		
-		if (this.mIntentReceiver != null)
-			this.mIntentReceiver.unregister();
+		super.onDestroy();
+	}
+
+	private void registerListeners() {
+		
+		this.mSongsButton = (Button)this.findViewById(R.id.button_songs);
+		this.mExitButton = (Button)this.findViewById(R.id.button_exit);
+		
+		this.mSongsButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+
+				MainActivity.this.openSongs();
+			}
+		});
+		
+		this.mExitButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+
+				MainActivity.this.finish();
+			}
+		});
 	}
 	
-	private void append(String text){
-
-		this.mAdapter.add(text);
-		this.mAdapter.notifyDataSetChanged();
+	private void openSongs() {
+	
+		final Intent songsIntent = new Intent(this, SongsActivity.class);
+		this.startActivity(songsIntent);
 	}
-
 }

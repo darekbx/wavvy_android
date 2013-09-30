@@ -1,24 +1,20 @@
 package com.wavvy.logic;
 
 import com.wavvy.R;
-import com.wavvy.listeners.TrackReceivedListener;
-import com.wavvy.model.Track;
+import com.wavvy.receivers.MusicReceiver;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 
 public class IntentReceiver extends BaseContext {
 
-	private Scrobbler mScrobbler;
-	private TrackReceivedListener mTrackReceived;
+	private MusicReceiver mReceiver;
 	
 	public IntentReceiver(Context context) {
 
 		super(context);
 		
-		this.mScrobbler = new Scrobbler(context);
+		this.mReceiver = new MusicReceiver();
 	}
 
 	public void register() {
@@ -35,28 +31,5 @@ public class IntentReceiver extends BaseContext {
 	public void unregister() {
 	
 		this.getContext().unregisterReceiver(this.mReceiver);
-		this.mTrackReceived = null;
 	}
-
-	public void setOnTrackReceivedListener(TrackReceivedListener l) {
-	
-		this.mTrackReceived = l;
-	}
-	
-	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-
-			try {
-
-				final Track track = IntentReceiver.this.mScrobbler.parseTrack(intent.getExtras());
-				IntentReceiver.this.mTrackReceived.TrackReceived(track);
-			} 
-			catch (Exception e) {
-				
-				e.printStackTrace();
-			}
-		}
-	};
 }

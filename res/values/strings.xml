@@ -2,5 +2,9 @@
 <resources>
 
     <string name="app_name">Wavvy</string>
-
+    <string name="menu_songs">Songs</string>
+    <string name="menu_map">Map</string>
+    <string name="menu_me">Me</string>
+    <string name="menu_exit">Exit</string>
+    
 </resources>
