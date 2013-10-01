@@ -1,6 +1,7 @@
 package com.wavvy.db;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import com.wavvy.R;
@@ -32,6 +33,9 @@ public class StorageManager extends BaseContext {
 
 	public boolean addTrack(Track track) {
 
+		// set date
+		track.setDate(Calendar.getInstance().getTimeInMillis());
+		
 		final String sql = String.format(
 				this.getString(R.string.db_track_insert), 
 				this.trackTableName());

@@ -67,12 +67,4 @@ public class Track {
 	public void setDate(String date) {	
 		this.mDate = Long.parseLong(date);
 	}
-	
-	@Override
-	public String toString() {
-
-		return new StringBuilder()
-				.append(this.mArtist).append(" - ")
-				.append(this.mTitle).toString();
-	}
 }
