@@ -49,10 +49,17 @@ public class StorageManager extends BaseContext {
 	}
 
 	public List<Track> getTracks() {
+		
+		return this.getTracks(-1);
+	}
+	
+	public List<Track> getTracks(int limit) {
 
+		final String limitString = limit == -1 ? null : String.valueOf(limit);
+		
 		final Cursor cursor = this.mDataBase.query(
 				this.trackTableName(), this.trackColumns(),
-				null, null, null, null, null);
+				null, null, null, null, null, limitString);
 		
 		final List<Track> items = new ArrayList<Track>();
 		
@@ -60,7 +67,7 @@ public class StorageManager extends BaseContext {
 		
 			do {
 				
-				items.add(this.getTrackFromCursor(cursor));
+				items.add(this.getTrackFromCursor(cursor));	
 			}
 			while (cursor.moveToNext());
 		}
