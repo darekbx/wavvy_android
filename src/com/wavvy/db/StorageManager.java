@@ -38,7 +38,7 @@ public class StorageManager extends BaseContext {
 
 		final SQLiteStatement stmt = this.mDataBase.compileStatement(sql);
 		stmt.bindString(1, track.getArtist());
-		stmt.bindString(2, track.getTrack());
+		stmt.bindString(2, track.getTitle());
 		stmt.bindString(3, track.getAlbum());
 		stmt.bindString(4, String.valueOf(track.getDate()));
 
@@ -75,7 +75,7 @@ public class StorageManager extends BaseContext {
 		final Track track = new Track();
 		track.setId(cursor.getInt(0));
 		track.setArtist(cursor.getString(1));
-		track.setTrack(cursor.getString(2));
+		track.setTitle(cursor.getString(2));
 		track.setAlbum(cursor.getString(3));
 		track.setDate(cursor.getString(4));
 

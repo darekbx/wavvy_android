@@ -35,8 +35,13 @@ public class Scrobbler extends BaseContext {
 				return track;
 		}
 
-		if (track == null)
+		if (track == null) {
+			
 			track = this.readTrackFromBundleData(bundle);
+			
+			if (!track.isValid())
+				return null;
+		}
 		
 		return track;
 	}
@@ -83,7 +88,8 @@ public class Scrobbler extends BaseContext {
 					cursor.getString(0), 
 					cursor.getString(1), 
 					cursor.getString(2));
-		} 
+		}
+		catch (Exception e) { return null; }
 		finally {
 			
 			cursor.close();
@@ -93,13 +99,18 @@ public class Scrobbler extends BaseContext {
 	private Track readTrackFromBundleData(final Bundle bundle) {
 
 		return new Track(
-				this.getStringFromBundle(bundle, R.string.receiver_artist_key), 
-				this.getStringFromBundle(bundle, R.string.receiver_album_key), 
-				this.getStringFromBundle(bundle, R.string.receiver_track_key));
+				this.getStringFromBundle(bundle, R.string.receiver_artist_key),  
+				this.getStringFromBundle(bundle, R.string.receiver_track_key),
+				this.getStringFromBundle(bundle, R.string.receiver_album_key));
 	}
 	
 	private String getStringFromBundle(final Bundle bundle, final int keyResourceId) {
 		
-		return bundle.getCharSequence(this.getString(keyResourceId)).toString();
+		final String key = this.getString(keyResourceId);
+		
+		if (!bundle.containsKey(key))
+			return null;
+		
+		return bundle.getCharSequence(key).toString();
 	}
 }

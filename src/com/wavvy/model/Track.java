@@ -4,17 +4,24 @@ public class Track {
 
 	private int mId;
 	private String mArtist;
-	private String mTrack;
+	private String mTitle;
 	private String mAlbum;
 	private long mDate;
 
 	public Track() { }
 	
-	public Track(String artist, String track, String album) {
+	public Track(String artist, String title, String album) {
 
 		this.mArtist = artist;
-		this.mTrack = track;
+		this.mTitle = title;
 		this.mAlbum = album;
+	}
+	
+	public boolean isValid() {
+	
+		return this.mArtist != null 
+				|| this.mTitle != null 
+				|| this.mAlbum != null;
 	}
 	
 	public int getId() {
@@ -25,8 +32,8 @@ public class Track {
 		return this.mArtist;
 	}
 	
-	public String getTrack() {
-		return this.mTrack;
+	public String getTitle() {
+		return this.mTitle;
 	}
 	
 	public String getAlbum() {
@@ -45,8 +52,8 @@ public class Track {
 		this.mArtist = artist;
 	}
 	
-	public void setTrack(String track) {
-		this.mTrack = track;
+	public void setTitle(String title) {
+		this.mTitle = title;
 	}
 
 	public void setAlbum(String album) {
@@ -66,6 +73,6 @@ public class Track {
 
 		return new StringBuilder()
 				.append(this.mArtist).append(" - ")
-				.append(this.mTrack).toString();
+				.append(this.mTitle).toString();
 	}
 }

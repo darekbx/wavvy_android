@@ -3,7 +3,7 @@
     <string-array name="track_columns">
         <item>_id</item>
         <item>artist</item>
-        <item>track</item>
+        <item>title</item>
         <item>album</item>
         <item>date</item>
     </string-array>
