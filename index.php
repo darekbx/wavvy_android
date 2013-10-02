@@ -38,6 +38,9 @@ if (!empty($_POST)) {
 		if (array_key_exists($postName, $_POST))
 			$postIdentifierArr[] = $postName;
 	
+	if (count($postIdentifierArr) != count($postNameArr))
+		die();
+	
 	$stmt = $dbConnection->prepare("INSERT INTO `users` VALUES(null, ?, ?, ?, ?, ?, NOW())");
 	
 	$stmt->bind_param("sssss", 
