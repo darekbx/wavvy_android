@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(E_ALL);
+
 $server_name="mysql.cba.pl";
 $user_name='baza_dev';
 $password ='qaz1234';
@@ -7,8 +9,8 @@ $db_name='darekdev_cba_pl';
 
 $dbConnection = new mysqli($server_name, $user_name, $password, $db_name);
 
-if ($mysqli->connect_errno != 0)
-	die($mysqli->connect_error);
+if ($dbConnection->connect_errno != 0)
+	die($dbConnection->connect_error);
 
 // drop
 if (false) {
@@ -23,8 +25,8 @@ $sql = "CREATE TABLE IF NOT EXISTS `users` "
 		." `nick` VARCHAR(255) NULL, "
 		." `artist` VARCHAR(255) NULL, "
 		." `title` VARCHAR(255) NULL, "
-		." `longitude` VARCHAR(10) NULL, "
-		." `latitude` VARCHAR(10) NULL, "
+		." `latitude` DOUBLE NULL, "
+		." `longitude` DOUBLE NULL, "
 		." `date` DATETIME NULL, "
 		." PRIMARY KEY(`id`));";
 $dbConnection->query($sql);
@@ -38,31 +40,89 @@ if (!empty($_POST)) {
 		if (array_key_exists($postName, $_POST))
 			$postIdentifierArr[] = $postName;
 	
-	if (count($postIdentifierArr) != count($postNameArr))
-		die();
+	if (count($postIdentifierArr) != count($postNameArr)) {
+		
+    $dbConnection -> close();
+    die();
+  }
 	
 	$stmt = $dbConnection->prepare("INSERT INTO `users` VALUES(null, ?, ?, ?, ?, ?, NOW())");
 	
-	$stmt->bind_param("sssss", 
+	$stmt->bind_param('sssdd', 
 		$postIdentifierArr[0], 
 		$postIdentifierArr[1], 
 		$postIdentifierArr[2], 
-		$postIdentifierArr[3], 
-		$postIdentifierArr[4]);
+		doubleval($postIdentifierArr[3]), 
+		doubleval($postIdentifierArr[4]));
 		
 	$stmt->execute();
 	$stmt->close();
 }
 
-$select = "SELECT * FROM `users`";
-$data = @$dbConnection->query($select);
+if (!empty($_GET)) {
 
-while ($row = $data->fetch_assoc()) {
+  $action = $_GET['action'];
+  
+  if ($action)
+    switch ($action) {
+    
+      case 'nearest':
+        
+        // http://darekdev.cba.pl/?action=nearest&latitude=52.11&longitude=21.56
+        // http://darekdev.cba.pl/?action=nearest&latitude=52.165&longitude=22.27
+      
+        $latitude = doubleval($_GET['latitude']);
+        $longitude = doubleval($_GET['longitude']);
+        
+        $select = "SELECT * FROM `users`";
+        $data = $dbConnection->query($select);
+  
+        $result = array();
+        
+        while ($row = $data->fetch_assoc()) {
 
-	echo "id = ". $row['id'] . "<br />";
-	echo "nick = ". $row['nick'] ."<br />";
-	echo "artist = ". $row['artist'] ."<br />";
-	echo "date =  ".$row['date'] ."<br /><br />";
+          $distance = haversineGreatCircleDistance($latitude, $longitude, $row['latitude'], $row['longitude']); 
+          $nick = $row['nick'];
+          $result[$nick] = $distance;
+        }
+        
+        asort($result);
+        print_r(reset($result));
+      
+        break;
+       
+      // to remove -------------------------------------------------------------------------
+      case 'all':
+
+        $select = "SELECT * FROM `users`";
+        $data = $dbConnection->query($select);
+
+        while ($row = $data->fetch_assoc()) {
+
+          echo "id = ". $row['id'] . "<br />";
+          echo "nick = ". $row['nick'] ."<br />";
+          echo "artist = ". $row['artist'] ."<br />";
+          echo "date =  ".$row['date'] ."<br /><br />";
+        }
+
+        break;
+    }
+}
+
+function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000) {
+
+  // convert from degrees to radians
+  $latFrom = deg2rad($latitudeFrom);
+  $lonFrom = deg2rad($longitudeFrom);
+  $latTo = deg2rad($latitudeTo);
+  $lonTo = deg2rad($longitudeTo);
+
+  $latDelta = $latTo - $latFrom;
+  $lonDelta = $lonTo - $lonFrom;
+
+  $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+    cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+  return $angle * $earthRadius;
 }
 
 $dbConnection -> close();
