@@ -33,13 +33,10 @@ if (!empty($_GET)) {
   if ($action)
     switch ($action) {
     
-      case 'nearest':
-        $api->findNearest($_GET);
-        break;
-       
-      case 'all':
-        $api->printAll();
-        break;
+      case 'nearest': $api->findNearest($_GET); break;
+      case 'userlocations': $api->userLocations($_GET); break;
+      case 'nickexists': $api->nickExists($_GET); break;
+      //case 'all': $api->printAll(); break;
     }
 }
 
@@ -123,12 +120,53 @@ class Api {
       $this->printSuccess("added");
     }
   }
+  
+  // http://darekdev.cba.pl/?action=nickexists&nick=Darek
+  function nickExists($get) {
+  
+    if (!empty($get['nick'])) {
+    
+      $nick = $get['nick'];
+      
+      $stmt = $this->connection->prepare("SELECT COUNT(id) FROM `users` WHERE `nick` = ?");
+      $stmt->bind_param('s', $nick);
+      $stmt->execute();
+      
+      $result = $stmt->get_result();
+      $count = $result->fetch_array(MYSQLI_NUM)[0];
+      
+      $stmt->close();
+      
+      echo json_encode(array("count" => $count));
+    }
+  }
+  
+  // http://darekdev.cba.pl/?action=userlocations&nick=Darek
+  function userLocations($get) {
+  
+    if (!empty($get['nick'])) {
+    
+      $nick = $get['nick'];
+      
+      $stmt = $this->connection->prepare("SELECT * FROM `users` WHERE `nick` = ?");
+      $stmt->bind_param('s', $nick);
+      $stmt->execute();
+      
+      $result = $stmt->get_result();
+      $rows = array();
+      
+      while ($row = $result->fetch_assoc())
+        $rows[] = $row;
+      
+      $stmt->close();
+      
+      echo json_encode($rows);
+    }
+  }
 
+  // http://darekdev.cba.pl/?action=nearest&latitude=52.11&longitude=21.56
   function findNearest($get) {
 
-    // http://darekdev.cba.pl/?action=nearest&latitude=52.11&longitude=21.56
-    // http://darekdev.cba.pl/?action=nearest&latitude=52.165&longitude=22.27
-    
     if (is_numeric($get['latitude']) && is_numeric($get['longitude']) && !empty($get['nick'])) {
       
       $lat = doubleval($get['latitude']);
