@@ -4,21 +4,6 @@ error_reporting(E_ALL);
 
 $api = new Api();
 $api->connect();
-
-// drop
-if (false) {
-	
-	$sql = "DROP TABLE IF EXISTS `users`";
-	$api->connection()->query($sql);
-}
-
-// delete 
-if (false) {
-
-	$sql = "DELETE FROM `users` WHERE id > 2";
-	$api->connection()->query($sql);
-}
-
 $api->createTables();
 
 if (!empty($_POST)) {
@@ -36,7 +21,11 @@ if (!empty($_GET)) {
       case 'nearest': $api->findNearest($_GET); break;
       case 'userlocations': $api->userLocations($_GET); break;
       case 'nickexists': $api->nickExists($_GET); break;
-      //case 'all': $api->printAll(); break;
+      
+      // --------------------------------------- UNSAFE
+      case 'all': $api->printAll(); break;
+      case 'drop': $api->drop(); break;
+      // --------------------------------------- UNSAFE
     }
 }
 
@@ -74,9 +63,17 @@ class Api {
     
   function createTables() {
 
-    $sql = "CREATE TABLE IF NOT EXISTS `users` "
+    $sql = "CREATE TABLE IF NOT EXISTS `user` "
         ."(`id` INT NOT NULL AUTO_INCREMENT, "
         ." `nick` VARCHAR(255) NULL, "
+        ." `created` DATETIME NULL, "
+        ." PRIMARY KEY(`id`));";
+        
+    $this->connection->query($sql);
+    
+    $sql = "CREATE TABLE IF NOT EXISTS `song` "
+        ."(`id` INT NOT NULL AUTO_INCREMENT, "
+        ." `id_user` INT NULL, "
         ." `artist` VARCHAR(255) NULL, "
         ." `title` VARCHAR(255) NULL, "
         ." `latitude` DOUBLE NULL, "
@@ -86,10 +83,21 @@ class Api {
         
     $this->connection->query($sql);
   }
+  
+  function drop() {
+  
+    $sql = "DROP TABLE IF EXISTS `user`";
+    $this->connection()->query($sql);
+    
+    $sql = "DROP TABLE IF EXISTS `song`";
+    $this->connection()->query($sql);
+    
+    echo "ok";
+  }
 
   function add($post) {
 
-    $postNameArr = array('nick', 'artist', 'title', 'latitude', 'longitude');
+    $postNameArr = array('id_user', 'artist', 'title', 'latitude', 'longitude');
     $postIdentifierArr = array();
     
     try {
@@ -104,13 +112,14 @@ class Api {
       }
       else {
       
-        $stmt = $this->connection->prepare("INSERT INTO `users` VALUES(null, ?, ?, ?, ?, ?, NOW())");
+        $stmt = $this->connection->prepare("INSERT INTO `song` VALUES(null, ?, ?, ?, ?, ?, NOW())");
         
+        $id = intval($postIdentifierArr[0]);
         $lat = doubleval($postIdentifierArr[3]);
         $lon = doubleval($postIdentifierArr[4]);
         
-        $stmt->bind_param('sssdd', 
-          $postIdentifierArr[0], 
+        $stmt->bind_param('issdd', 
+          $id, 
           $postIdentifierArr[1], 
           $postIdentifierArr[2], 
           $lat, 
@@ -137,7 +146,7 @@ class Api {
         
         $nick = $get['nick'];
         
-        $stmt = $this->connection->prepare("SELECT COUNT(id) FROM `users` WHERE `nick` = ?");
+        $stmt = $this->connection->prepare("SELECT COUNT(id) FROM `user` WHERE `nick` = ?");
         $stmt->bind_param('s', $nick);
         $stmt->execute();
         
@@ -146,7 +155,34 @@ class Api {
         
         $stmt->close();
         
-        echo json_encode(array("count" => $count));
+        if ($count == 0) {
+          
+          $this->reserveNick($nick);
+        }
+        else {
+        
+          echo json_encode(array("count" => $count));
+        }
+      } 
+      catch (Exception $e) {
+      
+        $this->printError($e->getMessage());
+      }
+    }
+  }
+  
+  function reserveNick($nick) {
+  
+    if (!empty($nick)) {
+      
+      try { 
+        
+        $stmt = $this->connection->prepare("INSERT INTO `user` VALUES(null, ?, NOW())");
+        $stmt->bind_param('s', $nick);
+        $stmt->execute();
+        $stmt->close();
+        
+        echo json_encode(array("id" => $this->connection->insert_id));
       } 
       catch (Exception $e) {
       
@@ -158,14 +194,14 @@ class Api {
   // http://darekdev.cba.pl/?action=userlocations&nick=Darek
   function userLocations($get) {
   
-    if (!empty($get['nick'])) {
+    if (!empty($get['id_user'])) {
     
       try {
       
-        $nick = $get['nick'];
+        $id_user= $get['id_user'];
         
-        $stmt = $this->connection->prepare("SELECT * FROM `users` WHERE `nick` = ?");
-        $stmt->bind_param('s', $nick);
+        $stmt = $this->connection->prepare("SELECT * FROM `user` WHERE `id` = ?");
+        $stmt->bind_param('i', $id_user);
         $stmt->execute();
         
         $result = $stmt->get_result();
@@ -189,26 +225,26 @@ class Api {
   // http://darekdev.cba.pl/?action=nearest&latitude=52.11&longitude=21.56&nick=Darek
   function findNearest($get) {
 
-    if (is_numeric($get['latitude']) && is_numeric($get['longitude']) && !empty($get['nick'])) {
+    if (is_numeric($get['latitude']) && is_numeric($get['longitude']) && !empty($get['id_user'])) {
       
       try {
         
         $lat = doubleval($get['latitude']);
         $lon = doubleval($get['longitude']);
-        $nick = $get['nick'];
+        $id_user = $get['id_user'];
         
-        $select = "SELECT id, nick, latitude, longitude FROM `users`";
+        $select = "SELECT id, id_user, latitude, longitude FROM `song`";
         $data = $this->connection->query($select);
         $result = array();
         
         while ($row = $data->fetch_assoc()) {
           
-          if (strcmp(strtolower($nick), strtolower($row['nick'])) == 0)
+          if ($id_user == $row['id_user'])
             continue;
           
           // find nearest user
           $distance = $this->haversineGreatCircleDistance($lat, $lon, $row['latitude'], $row['longitude']); 
-          $result[$row['id']] = $distance;
+          $result[$row['id_user']] = $distance;
         }
         
         asort($result);
@@ -216,7 +252,7 @@ class Api {
         list($key, $value) = each($result);
 
         // get detailed user info
-        $select = "SELECT * FROM `users` WHERE `id` = ". $key;
+        $select = "SELECT * FROM `user` WHERE `id` = ". $key;
         $data = $this->connection->query($select);
 
         echo json_encode($data->fetch_assoc());
@@ -228,13 +264,13 @@ class Api {
     }
     else {
     
-      $this->printError("Invalid one of parameters: logitude, latitude, nick.");
+      $this->printError("Invalid one of parameters: logitude, latitude, id_user.");
     }
   }
 
   function printAll() {
 
-    $select = "SELECT * FROM `users`";
+    $select = "SELECT * FROM `user`";
     $data = $this->connection->query($select);
 
     while ($row = $data->fetch_assoc())

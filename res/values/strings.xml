@@ -8,4 +8,23 @@
     <string name="menu_exit">Exit</string>
     <string name="dot_format">%s.</string>
     
+    <string name="address_base">http://darekdev.cba.pl/</string>
+    <string name="address_nickexists">"?action=nickexists&amp;nick=%s"</string>
+    <string name="address_reservenick">"?action=reservenick&amp;nick=%s"</string>
+    <string name="address_userlocations">"?action=userlocations&amp;id_user=%s"</string>
+    <string name="address_nearest" formatted="false">"?action=nearest&amp;latitude=%s&amp;longitude=%s&amp;id_user=%s"</string>
+    
+    <string name="nick_enter_nick">Enter your nick</string>
+    <string name="nick_empty">Enter nick.</string>
+    <string name="nick_too_short">Entered nick is too short.</string>
+    <string name="nick_reserved">Nick is already reserved.</string>
+    <string name="nick_count">count</string>
+    <string name="nick_id">id</string>
+    
+    <string name="user_nick_key">nick_key</string>
+    <string name="user_id_key">id_key</string>
+    
+    <string name="error_no_internet">Check your internet connection!</string>
+    <string name="error_unknown">An unknown error has occurred!</string>
+    
 </resources>

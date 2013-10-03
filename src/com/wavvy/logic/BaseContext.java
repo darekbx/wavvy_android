@@ -10,6 +10,11 @@ public class BaseContext {
 	
 		this.mContext = context;
 	}
+
+	protected String getString(final int resourceId, Object... formatArgs) {
+	
+		return this.mContext.getString(resourceId, formatArgs);
+	}
 	
 	protected String getString(final int resourceId) {
 	
