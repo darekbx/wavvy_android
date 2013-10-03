@@ -70,6 +70,7 @@ if (!empty($_GET)) {
         
         // http://darekdev.cba.pl/?action=nearest&latitude=52.11&longitude=21.56
         // http://darekdev.cba.pl/?action=nearest&latitude=52.165&longitude=22.27
+		// http://darekdev.cba.pl/?action=nearest&latitude=52.12&longitude=23.12 7726 -> 13323
       
         $latitude = doubleval($_GET['latitude']);
         $longitude = doubleval($_GET['longitude']);
@@ -102,6 +103,8 @@ if (!empty($_GET)) {
           echo "id = ". $row['id'] . "<br />";
           echo "nick = ". $row['nick'] ."<br />";
           echo "artist = ". $row['artist'] ."<br />";
+          echo "latitude = ". $row['latitude'] ."<br />";
+          echo "longitude = ". $row['longitude'] ."<br />";
           echo "date =  ".$row['date'] ."<br /><br />";
         }
 
