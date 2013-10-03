@@ -92,32 +92,39 @@ class Api {
     $postNameArr = array('nick', 'artist', 'title', 'latitude', 'longitude');
     $postIdentifierArr = array();
     
-    foreach ($postNameArr as $postName)
-      if (array_key_exists($postName, $post))
-        $postIdentifierArr[] = $postName;
+    try {
     
-    if (count($postIdentifierArr) != count($postNameArr)) {
+      foreach ($postNameArr as $postName)
+        if (array_key_exists($postName, $post))
+          $postIdentifierArr[] = $postName;
       
-      $this->printError("Wrong parameters.");
-    }
-    else {
-    
-      $stmt = $this->connection->prepare("INSERT INTO `users` VALUES(null, ?, ?, ?, ?, ?, NOW())");
-      
-      $lat = doubleval($postIdentifierArr[3]);
-      $lon = doubleval($postIdentifierArr[4]);
-      
-      $stmt->bind_param('sssdd', 
-        $postIdentifierArr[0], 
-        $postIdentifierArr[1], 
-        $postIdentifierArr[2], 
-        $lat, 
-        $lon);
+      if (count($postIdentifierArr) != count($postNameArr)) {
         
-      $stmt->execute();
-      $stmt->close();
+        $this->printError("Wrong parameters.");
+      }
+      else {
       
-      $this->printSuccess("added");
+        $stmt = $this->connection->prepare("INSERT INTO `users` VALUES(null, ?, ?, ?, ?, ?, NOW())");
+        
+        $lat = doubleval($postIdentifierArr[3]);
+        $lon = doubleval($postIdentifierArr[4]);
+        
+        $stmt->bind_param('sssdd', 
+          $postIdentifierArr[0], 
+          $postIdentifierArr[1], 
+          $postIdentifierArr[2], 
+          $lat, 
+          $lon);
+          
+        $stmt->execute();
+        $stmt->close();
+        
+        $this->printSuccess("added");
+      }
+    } 
+    catch (Exception $e) {
+    
+      $this->printError($e->getMessage());
     }
   }
   
@@ -125,19 +132,26 @@ class Api {
   function nickExists($get) {
   
     if (!empty($get['nick'])) {
-    
-      $nick = $get['nick'];
       
-      $stmt = $this->connection->prepare("SELECT COUNT(id) FROM `users` WHERE `nick` = ?");
-      $stmt->bind_param('s', $nick);
-      $stmt->execute();
+      try { 
+        
+        $nick = $get['nick'];
+        
+        $stmt = $this->connection->prepare("SELECT COUNT(id) FROM `users` WHERE `nick` = ?");
+        $stmt->bind_param('s', $nick);
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        $count = $result->fetch_array(MYSQLI_NUM)[0];
+        
+        $stmt->close();
+        
+        echo json_encode(array("count" => $count));
+      } 
+      catch (Exception $e) {
       
-      $result = $stmt->get_result();
-      $count = $result->fetch_array(MYSQLI_NUM)[0];
-      
-      $stmt->close();
-      
-      echo json_encode(array("count" => $count));
+        $this->printError($e->getMessage());
+      }
     }
   }
   
@@ -146,21 +160,29 @@ class Api {
   
     if (!empty($get['nick'])) {
     
-      $nick = $get['nick'];
+      try {
       
-      $stmt = $this->connection->prepare("SELECT * FROM `users` WHERE `nick` = ?");
-      $stmt->bind_param('s', $nick);
-      $stmt->execute();
+        $nick = $get['nick'];
+        
+        $stmt = $this->connection->prepare("SELECT * FROM `users` WHERE `nick` = ?");
+        $stmt->bind_param('s', $nick);
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        $rows = array();
+        
+        while ($row = $result->fetch_assoc())
+          $rows[] = $row;
+        
+        $stmt->close();
+        
+        echo json_encode($rows);
+        
+      } 
+      catch (Exception $e) {
       
-      $result = $stmt->get_result();
-      $rows = array();
-      
-      while ($row = $result->fetch_assoc())
-        $rows[] = $row;
-      
-      $stmt->close();
-      
-      echo json_encode($rows);
+        $this->printError($e->getMessage());
+      }
     }
   }
 
@@ -169,33 +191,40 @@ class Api {
 
     if (is_numeric($get['latitude']) && is_numeric($get['longitude']) && !empty($get['nick'])) {
       
-      $lat = doubleval($get['latitude']);
-      $lon = doubleval($get['longitude']);
-      $nick = $get['nick'];
-      
-      $select = "SELECT id, nick, latitude, longitude FROM `users`";
-      $data = $this->connection->query($select);
-      $result = array();
-      
-      while ($row = $data->fetch_assoc()) {
+      try {
         
-        if (strcmp(strtolower($nick), strtolower($row['nick'])) == 0)
-          continue;
+        $lat = doubleval($get['latitude']);
+        $lon = doubleval($get['longitude']);
+        $nick = $get['nick'];
         
-        // find nearest user
-        $distance = $this->haversineGreatCircleDistance($lat, $lon, $row['latitude'], $row['longitude']); 
-        $result[$row['id']] = $distance;
-      }
-      
-      asort($result);
-      
-      list($key, $value) = each($result);
+        $select = "SELECT id, nick, latitude, longitude FROM `users`";
+        $data = $this->connection->query($select);
+        $result = array();
+        
+        while ($row = $data->fetch_assoc()) {
+          
+          if (strcmp(strtolower($nick), strtolower($row['nick'])) == 0)
+            continue;
+          
+          // find nearest user
+          $distance = $this->haversineGreatCircleDistance($lat, $lon, $row['latitude'], $row['longitude']); 
+          $result[$row['id']] = $distance;
+        }
+        
+        asort($result);
+        
+        list($key, $value) = each($result);
 
-      // get detailed user info
-      $select = "SELECT * FROM `users` WHERE `id` = ". $key;
-      $data = $this->connection->query($select);
+        // get detailed user info
+        $select = "SELECT * FROM `users` WHERE `id` = ". $key;
+        $data = $this->connection->query($select);
 
-      echo json_encode($data->fetch_assoc()); 
+        echo json_encode($data->fetch_assoc());
+      } 
+      catch (Exception $e) {
+      
+        $this->printError($e->getMessage());
+      } 
     }
     else {
     
