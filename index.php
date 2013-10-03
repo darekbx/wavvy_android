@@ -89,7 +89,7 @@ class Api {
 
   function add($post) {
 
-    $postNameArr = array('nick', 'artist', 'title', 'longitude', 'latitude');
+    $postNameArr = array('nick', 'artist', 'title', 'latitude', 'longitude');
     $postIdentifierArr = array();
     
     foreach ($postNameArr as $postName)
@@ -164,7 +164,7 @@ class Api {
     }
   }
 
-  // http://darekdev.cba.pl/?action=nearest&latitude=52.11&longitude=21.56
+  // http://darekdev.cba.pl/?action=nearest&latitude=52.11&longitude=21.56&nick=Darek
   function findNearest($get) {
 
     if (is_numeric($get['latitude']) && is_numeric($get['longitude']) && !empty($get['nick'])) {
