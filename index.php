@@ -157,7 +157,7 @@ class Api {
       $select = "SELECT * FROM `users` WHERE `id` = ". $key;
       $data = $this->connection->query($select);
 
-      echo json_encode($data->fetch_assoc());
+      echo json_encode($data->fetch_assoc()); 
     }
     else {
     
