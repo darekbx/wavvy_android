@@ -129,21 +129,24 @@ class Api {
     // http://darekdev.cba.pl/?action=nearest&latitude=52.11&longitude=21.56
     // http://darekdev.cba.pl/?action=nearest&latitude=52.165&longitude=22.27
     
-    if (is_numeric($get['latitude']) && is_numeric($get['longitude'])) {
+    if (is_numeric($get['latitude']) && is_numeric($get['longitude']) && !empty($get['nick'])) {
       
       $lat = doubleval($get['latitude']);
       $lon = doubleval($get['longitude']);
+      $nick = $get['nick'];
       
-      $select = "SELECT id, latitude, longitude FROM `users`";
+      $select = "SELECT id, nick, latitude, longitude FROM `users`";
       $data = $this->connection->query($select);
       $result = array();
       
       while ($row = $data->fetch_assoc()) {
-
+        
+        if (strcmp(strtolower($nick), strtolower($row['nick'])) == 0)
+          continue;
+        
         // find nearest user
         $distance = $this->haversineGreatCircleDistance($lat, $lon, $row['latitude'], $row['longitude']); 
-        $nick = $row['id'];
-        $result[$nick] = $distance;
+        $result[$row['id']] = $distance;
       }
       
       asort($result);
@@ -158,7 +161,7 @@ class Api {
     }
     else {
     
-      $this->printError("Invalid logitude or latitude.");
+      $this->printError("Invalid one of parameters: logitude, latitude, nick.");
     }
   }
 
