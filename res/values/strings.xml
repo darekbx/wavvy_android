@@ -9,8 +9,7 @@
     <string name="dot_format">%s.</string>
     
     <string name="address_base">http://darekdev.cba.pl/</string>
-    <string name="address_nickexists">"?action=nickexists&amp;nick=%s"</string>
-    <string name="address_reservenick">"?action=reservenick&amp;nick=%s"</string>
+    <string name="address_registernick">"?action=registernick&amp;nick=%s"</string>
     <string name="address_userlocations">"?action=userlocations&amp;id_user=%s"</string>
     <string name="address_nearest" formatted="false">"?action=nearest&amp;latitude=%s&amp;longitude=%s&amp;id_user=%s"</string>
     

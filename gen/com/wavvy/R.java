@@ -57,35 +57,34 @@ public final class R {
     }
     public static final class string {
         public static final int address_base=0x7f060006;
-        public static final int address_nearest=0x7f06000a;
-        public static final int address_nickexists=0x7f060007;
-        public static final int address_reservenick=0x7f060008;
-        public static final int address_userlocations=0x7f060009;
+        public static final int address_nearest=0x7f060009;
+        public static final int address_registernick=0x7f060007;
+        public static final int address_userlocations=0x7f060008;
         public static final int app_name=0x7f060000;
-        public static final int db_name=0x7f060015;
-        public static final int db_track_create_syntax=0x7f060017;
-        public static final int db_track_insert=0x7f060018;
-        public static final int db_track_tablename=0x7f060016;
-        public static final int db_where_id=0x7f060019;
+        public static final int db_name=0x7f060014;
+        public static final int db_track_create_syntax=0x7f060016;
+        public static final int db_track_insert=0x7f060017;
+        public static final int db_track_tablename=0x7f060015;
+        public static final int db_where_id=0x7f060018;
         public static final int dot_format=0x7f060005;
-        public static final int error_no_internet=0x7f060013;
-        public static final int error_unknown=0x7f060014;
+        public static final int error_no_internet=0x7f060012;
+        public static final int error_unknown=0x7f060013;
         public static final int menu_exit=0x7f060004;
         public static final int menu_map=0x7f060002;
         public static final int menu_me=0x7f060003;
         public static final int menu_songs=0x7f060001;
-        public static final int nick_count=0x7f06000f;
-        public static final int nick_empty=0x7f06000c;
-        public static final int nick_enter_nick=0x7f06000b;
-        public static final int nick_id=0x7f060010;
-        public static final int nick_reserved=0x7f06000e;
-        public static final int nick_too_short=0x7f06000d;
-        public static final int receiver_album_key=0x7f06001c;
-        public static final int receiver_artist_key=0x7f06001b;
-        public static final int receiver_id_key=0x7f06001a;
-        public static final int receiver_track_key=0x7f06001d;
-        public static final int user_id_key=0x7f060012;
-        public static final int user_nick_key=0x7f060011;
+        public static final int nick_count=0x7f06000e;
+        public static final int nick_empty=0x7f06000b;
+        public static final int nick_enter_nick=0x7f06000a;
+        public static final int nick_id=0x7f06000f;
+        public static final int nick_reserved=0x7f06000d;
+        public static final int nick_too_short=0x7f06000c;
+        public static final int receiver_album_key=0x7f06001b;
+        public static final int receiver_artist_key=0x7f06001a;
+        public static final int receiver_id_key=0x7f060019;
+        public static final int receiver_track_key=0x7f06001c;
+        public static final int user_id_key=0x7f060011;
+        public static final int user_nick_key=0x7f060010;
     }
     public static final class style {
         /** 

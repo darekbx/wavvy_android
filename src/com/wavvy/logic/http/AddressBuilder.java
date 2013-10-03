@@ -15,28 +15,11 @@ public class AddressBuilder extends BaseContext {
 		super(context);
 	}
 
-	public URI nickExists(String nick) {
+	public URI registerNick(String nick) {
 
 		final StringBuilder builder = new StringBuilder();
 		builder.append(this.getString(R.string.address_base));
-		builder.append(this.getString(R.string.address_nickexists, nick));
-		
-		try {
-			
-			return new URI(builder.toString());
-		} 
-		catch (URISyntaxException e) {
-			
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public URI reserveNick(String nick) {
-
-		final StringBuilder builder = new StringBuilder();
-		builder.append(this.getString(R.string.address_base));
-		builder.append(this.getString(R.string.address_nickexists, nick));
+		builder.append(this.getString(R.string.address_registernick, nick));
 		
 		try {
 			

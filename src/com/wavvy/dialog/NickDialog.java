@@ -82,7 +82,7 @@ public class NickDialog extends BaseDialog {
 				}
 			});
 		
-			final URI uri = new AddressBuilder(this.getContext()).nickExists(nick);
+			final URI uri = new AddressBuilder(this.getContext()).registerNick(nick);
 			
 			if (uri != null) {
 				

@@ -20,7 +20,7 @@ if (!empty($_GET)) {
     
       case 'nearest': $api->findNearest($_GET); break;
       case 'userlocations': $api->userLocations($_GET); break;
-      case 'nickexists': $api->nickExists($_GET); break;
+      case 'registernick': $api->registerNick($_GET); break;
       
       // --------------------------------------- UNSAFE
       case 'all': $api->printAll(); break;
@@ -33,6 +33,7 @@ $api->disconnect();
 
 class Api {
 
+  private $maxNearest = 10;
   private $connection;
   
   function connect() {
@@ -137,8 +138,8 @@ class Api {
     }
   }
   
-  // http://darekdev.cba.pl/?action=nickexists&nick=Darek
-  function nickExists($get) {
+  // http://darekdev.cba.pl/?action=registernick&nick=Darek
+  function registerNick($get) {
   
     if (!empty($get['nick'])) {
       
@@ -191,16 +192,16 @@ class Api {
     }
   }
   
-  // http://darekdev.cba.pl/?action=userlocations&nick=Darek
+  // http://darekdev.cba.pl/?action=userlocations&id_user=1
   function userLocations($get) {
-  
+
     if (!empty($get['id_user'])) {
     
       try {
       
         $id_user= $get['id_user'];
         
-        $stmt = $this->connection->prepare("SELECT * FROM `user` WHERE `id` = ?");
+        $stmt = $this->connection->prepare("SELECT * FROM `song` WHERE `id_user` = ?");
         $stmt->bind_param('i', $id_user);
         $stmt->execute();
         
@@ -222,9 +223,9 @@ class Api {
     }
   }
 
-  // http://darekdev.cba.pl/?action=nearest&latitude=52.11&longitude=21.56&nick=Darek
+  // http://darekdev.cba.pl/?action=nearest&latitude=52.11&longitude=21.56&id_user=1
   function findNearest($get) {
-
+  
     if (is_numeric($get['latitude']) && is_numeric($get['longitude']) && !empty($get['id_user'])) {
       
       try {
@@ -235,27 +236,52 @@ class Api {
         
         $select = "SELECT id, id_user, latitude, longitude FROM `song`";
         $data = $this->connection->query($select);
-        $result = array();
+        $distances = array();
         
-        while ($row = $data->fetch_assoc()) {
+        if ($data) {
           
-          if ($id_user == $row['id_user'])
-            continue;
+          while ($row = $data->fetch_assoc()) {
+            
+            if ($id_user == $row['id_user'])
+              continue;
+            
+            // find nearest user
+            $distance = $this->haversineGreatCircleDistance($lat, $lon, $row['latitude'], $row['longitude']); 
+            $distances[$row['id_user']] = $distance;
+          }
           
-          // find nearest user
-          $distance = $this->haversineGreatCircleDistance($lat, $lon, $row['latitude'], $row['longitude']); 
-          $result[$row['id_user']] = $distance;
+          $data->close();
+          asort($distances);
+          
+          if (count($distances) > 0) {
+          
+            // get max nearest users
+            $distances = array_slice($distances, 0, $this->maxNearest, true);
+            $ids = array();
+            
+            foreach ($distances as $key => $value)
+              $ids[] = $key;
+              
+            // get detailed user info
+            $select = "SELECT * FROM `user` WHERE `id` IN (". implode(",", $ids) .") ORDER BY FIELD (id, ". implode(",", $ids) .")";
+            $data = $this->connection->query($select);
+            $result = array();
+            
+            while ($row = $data->fetch_assoc())
+              $result[] = array_merge(array("distance" => intval($distances[$row['id']])), $row);
+            
+            echo json_encode($result);
+            $data->close();
+          }
+          else {
+          
+            echo json_encode(array());
+          }
         }
+        else {
         
-        asort($result);
-        
-        list($key, $value) = each($result);
-
-        // get detailed user info
-        $select = "SELECT * FROM `user` WHERE `id` = ". $key;
-        $data = $this->connection->query($select);
-
-        echo json_encode($data->fetch_assoc());
+          echo json_encode(array());
+        }
       } 
       catch (Exception $e) {
       
@@ -275,6 +301,20 @@ class Api {
 
     while ($row = $data->fetch_assoc())
       echo json_encode($row) . "<br />";
+    
+    $data->close();
+    
+    for ($i = 0; $i < 50; $i++)
+      echo "-";
+    echo "<br />";
+    
+    $select = "SELECT * FROM `song`";
+    $data = $this->connection->query($select);
+
+    while ($row = $data->fetch_assoc())
+      echo json_encode($row) . "<br />";
+    
+    $data->close();
   }
 
   function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo) {
