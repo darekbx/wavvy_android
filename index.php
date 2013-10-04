@@ -38,10 +38,10 @@ class Api {
   
   function connect() {
 
-    $server_name="mysql.cba.pl";
-    $user_name='baza_dev';
-    $password ='qaz1234';
-    $db_name='darekdev_cba_pl';
+    $server_name = 'mysql.cba.pl';
+    $user_name = 'baza_dev';
+    $password = 'qaz1234';
+    $db_name = 'darekdev_cba_pl';
 
     $this->connection = new mysqli($server_name, $user_name, $password, $db_name);
 
@@ -84,17 +84,6 @@ class Api {
         
     $this->connection->query($sql);
   }
-  
-  function drop() {
-  
-    $sql = "DROP TABLE IF EXISTS `user`";
-    $this->connection()->query($sql);
-    
-    $sql = "DROP TABLE IF EXISTS `song`";
-    $this->connection()->query($sql);
-    
-    echo "ok";
-  }
 
   function add($post) {
 
@@ -105,7 +94,7 @@ class Api {
     
       foreach ($postNameArr as $postName)
         if (array_key_exists($postName, $post))
-          $postIdentifierArr[] = $postName;
+          $postIdentifierArr[] = $post[$postName];
       
       if (count($postIdentifierArr) != count($postNameArr)) {
         
@@ -236,34 +225,47 @@ class Api {
         
         $select = "SELECT id, id_user, latitude, longitude FROM `song`";
         $data = $this->connection->query($select);
-        $distances = array();
         
         if ($data) {
           
+          $distances = array();
+        
+          // loop through all songs
           while ($row = $data->fetch_assoc()) {
             
+            // skip current user
             if ($id_user == $row['id_user'])
               continue;
             
-            // find nearest user
-            $distance = $this->haversineGreatCircleDistance($lat, $lon, $row['latitude'], $row['longitude']); 
-            $distances[$row['id_user']] = $distance;
+            // find nearest distance
+            $distance = $this->haversineGreatCircleDistance($lat, $lon, $row['latitude'], $row['longitude']);
+            $add = true;
+            
+            // if exists, check if new distance is smaller
+            if (array_key_exists($row['id_user'], $distances)) {
+            
+              $existing = $distances[$row['id_user']];
+              $add = $existing > $distance;
+            }
+            
+            // set user distance
+            if ($add)
+              $distances[$row['id_user']] = $distance;
           }
           
           $data->close();
+          
+          // sort by distance
           asort($distances);
           
           if (count($distances) > 0) {
           
-            // get max nearest users
+            // limit nearest users
             $distances = array_slice($distances, 0, $this->maxNearest, true);
-            $ids = array();
-            
-            foreach ($distances as $key => $value)
-              $ids[] = $key;
-              
+            $ids = implode(",", array_keys($distances));
+
             // get detailed user info
-            $select = "SELECT * FROM `user` WHERE `id` IN (". implode(",", $ids) .") ORDER BY FIELD (id, ". implode(",", $ids) .")";
+            $select = "SELECT * FROM `user` WHERE `id` IN (". $ids .") ORDER BY FIELD (id, ". $ids .")";
             $data = $this->connection->query($select);
             $result = array();
             
@@ -315,6 +317,17 @@ class Api {
       echo json_encode($row) . "<br />";
     
     $data->close();
+  }
+  
+  function drop() {
+  
+    $sql = "DROP TABLE IF EXISTS `user`";
+    $this->connection()->query($sql);
+    
+    $sql = "DROP TABLE IF EXISTS `song`";
+    $this->connection()->query($sql);
+    
+    echo "dropped";
   }
 
   function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo) {
