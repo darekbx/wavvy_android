@@ -65,4 +65,18 @@ public class AddressBuilder extends BaseContext {
 			return null;
 		}
 	}
+	
+	public URI add() {
+
+		try {
+			
+			return new URI(this.getString(R.string.address_base));
+		} 
+		catch (URISyntaxException e) {
+			
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
 }

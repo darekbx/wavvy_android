@@ -26,4 +26,6 @@
     <string name="error_no_internet">Check your internet connection!</string>
     <string name="error_unknown">An unknown error has occurred!</string>
     
+    <string name="main_nick">Hi, %s</string>
+    
 </resources>

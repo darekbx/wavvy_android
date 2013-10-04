@@ -1,5 +1,11 @@
 package com.wavvy.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import org.apache.http.message.BasicNameValuePair;
+
 public class Track {
 
 	private int mId;
@@ -7,6 +13,8 @@ public class Track {
 	private String mTitle;
 	private String mAlbum;
 	private long mDate;
+	
+	private int mUserId;
 
 	public Track() { }
 	
@@ -15,6 +23,25 @@ public class Track {
 		this.mArtist = artist;
 		this.mTitle = title;
 		this.mAlbum = album;
+	}
+	
+	public List<BasicNameValuePair> getPostData() {
+
+		// id_user, artist, title, latitude, longitude
+		final List<BasicNameValuePair> data = new ArrayList<BasicNameValuePair>();
+		data.add(new BasicNameValuePair("id_user", String.valueOf(this.mUserId)));
+		data.add(new BasicNameValuePair("artist", this.mArtist));
+		data.add(new BasicNameValuePair("title", this.mTitle));
+		
+		// TODO: latitude & longitude
+		final Random r = new Random();
+		double latitude = 51 + r.nextDouble();
+		double longitude = 21 + r.nextDouble();
+
+		data.add(new BasicNameValuePair("latitude", String.valueOf(latitude)));
+		data.add(new BasicNameValuePair("longitude", String.valueOf(longitude)));
+		
+		return data;
 	}
 	
 	public boolean isValid() {
@@ -66,5 +93,13 @@ public class Track {
 
 	public void setDate(String date) {	
 		this.mDate = Long.parseLong(date);
+	}
+	
+	public int getUserId() {
+		return this.mUserId;
+	}
+
+	public void setUserId(int userId) {
+		this.mUserId = userId;
 	}
 }

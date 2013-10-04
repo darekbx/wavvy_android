@@ -1,24 +1,43 @@
 package com.wavvy;
 
+import java.util.List;
+
+import com.wavvy.db.StorageManager;
 import com.wavvy.dialog.NickDialog;
+import com.wavvy.logic.adapters.TrackAdapter;
 import com.wavvy.logic.storage.UserStorage;
+import com.wavvy.model.Track;
+import com.wavvy.model.User;
 
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.Intent;
 
 public class MainActivity extends Activity {
 
-	private Button mSongsButton;
-	private Button mExitButton;
+	public class RefreshReceiver extends BroadcastReceiver {
+		 
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+
+	    	MainActivity.this.loadSongs();
+	    }
+	}
+
+	private RefreshReceiver mRefreshReceiver;
+	private TrackAdapter mAdapter;
+	private ListView mList;
 	
 	private UserStorage mUserStorage;
+	private User mUser;
 	private NickDialog mDialog;
 	
 	@Override
@@ -35,6 +54,10 @@ public class MainActivity extends Activity {
 			this.mDialog = new NickDialog(this);
 			this.mDialog.show();
 		}
+		else {
+		
+			this.loadUser();
+		}
 		
 		this.registerListeners();
 	}
@@ -42,14 +65,14 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		
-		this.mExitButton.setOnClickListener(null);
-		this.mSongsButton.setOnClickListener(null);
-
 		if (this.mDialog != null) {
 		
 			this.mDialog.setOnCancelListener(null);
 			this.mDialog.setOnDismissListener(null);
 		}
+
+		if (this.mRefreshReceiver != null)
+			this.unregisterReceiver(this.mRefreshReceiver);
 		
 		super.onDestroy();
 	}
@@ -62,7 +85,7 @@ public class MainActivity extends Activity {
 				
 				@Override
 				public void onCancel(DialogInterface dialog) {
-	
+					
 					MainActivity.this.finish();
 				}
 			});
@@ -71,36 +94,59 @@ public class MainActivity extends Activity {
 				@Override
 				public void onDismiss(DialogInterface dialog) {
 					
-					
+					MainActivity.this.loadUser();
 				}
 			});
 		}
-		
-		this.mSongsButton = (Button)this.findViewById(R.id.button_songs);
-		this.mExitButton = (Button)this.findViewById(R.id.button_exit);
-		
-		this.mSongsButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-
-				MainActivity.this.openSongs();
-			}
-		});
-		
-		this.mExitButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-
-				MainActivity.this.finish();
-			}
-		});
 	}
 	
-	private void openSongs() {
+	private void loadUser() {
+
+		this.mUser = this.mUserStorage.getUser();
+		this.setWelcomeMessage();
+
+		this.registerReceiver();
+		this.loadSongs();
+	}
 	
-		final Intent songsIntent = new Intent(this, SongsActivity.class);
-		this.startActivity(songsIntent);
+	private void setWelcomeMessage() {
+		
+		final String message = this.getString(R.string.main_nick, this.mUser.getNick());
+		((TextView)this.findViewById(R.id.main_nick)).setText(message);
+	}
+	
+	private void registerReceiver() {
+
+		this.mRefreshReceiver = new RefreshReceiver();
+		final IntentFilter filter = new IntentFilter(RefreshReceiver.class.getName());
+		
+		this.registerReceiver(this.mRefreshReceiver, filter);
+	}
+	
+	private void loadSongs() {
+
+		if (this.mAdapter == null) {
+		
+			this.mAdapter = new TrackAdapter(this, R.layout.track_row);
+			this.mList = (ListView)this.findViewById(R.id.songs_list);
+			this.mList.setAdapter(this.mAdapter);
+		}
+		
+		this.fillAdapter();
+	}
+	
+	private void fillAdapter() {
+
+		final StorageManager manager = new StorageManager(this);
+		final List<Track> tracks = manager.getTracks();
+
+		manager.close();
+		
+		this.mAdapter.clear();
+		
+		for (final Track track : tracks)
+			this.mAdapter.add(track);
+
+		this.mAdapter.notifyDataSetChanged();
 	}
 }

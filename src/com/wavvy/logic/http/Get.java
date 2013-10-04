@@ -3,6 +3,7 @@ package com.wavvy.logic.http;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 import org.apache.http.HttpEntity;
@@ -38,7 +39,7 @@ public class Get extends AsyncTask<URI, Void, Boolean> {
 			final StatusLine statusLine = response.getStatusLine();
 			final int statusCode = statusLine.getStatusCode();
 			
-			if (statusCode == 200) {
+			if (statusCode == HttpURLConnection.HTTP_OK) {
 			
 				final HttpEntity entity = response.getEntity();
 				final InputStream content = entity.getContent();

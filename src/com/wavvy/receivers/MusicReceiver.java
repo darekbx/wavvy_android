@@ -1,8 +1,15 @@
 package com.wavvy.receivers;
 
-import com.wavvy.SongsActivity.RefreshReceiver;
+import java.net.URI;
+
+import com.wavvy.MainActivity.RefreshReceiver;
 import com.wavvy.db.StorageManager;
+import com.wavvy.listeners.PostListener;
 import com.wavvy.logic.Scrobbler;
+import com.wavvy.logic.http.AddressBuilder;
+import com.wavvy.logic.http.Post;
+import com.wavvy.logic.http.Utils;
+import com.wavvy.logic.storage.UserStorage;
 import com.wavvy.model.Track;
 
 import android.content.BroadcastReceiver;
@@ -30,9 +37,8 @@ public class MusicReceiver extends BroadcastReceiver {
 	
 		try {
 			
-			final StorageManager manager = new StorageManager(this.mContext);
-			manager.addTrack(track);
-			manager.close();
+			this.saveToDatabase(track);
+			this.saveToWeb(track);
 			
 			return true;
 		}
@@ -40,6 +46,44 @@ public class MusicReceiver extends BroadcastReceiver {
 		
 			e.printStackTrace();
 			return false;
+		}
+	}
+	
+	private void saveToDatabase(final Track track) {
+
+		final StorageManager manager = new StorageManager(this.mContext);
+		manager.addTrack(track);
+		manager.close();
+	}
+	
+	private void saveToWeb(final Track track) {
+		
+		// check internet
+		if (Utils.isOnline(this.mContext)) {
+
+			// set user id
+			final UserStorage storage = new UserStorage(this.mContext);
+			
+			if (!storage.isUserExists())
+				return;
+			
+			track.setUserId(storage.getUser().getId());
+			
+			// save
+			final Post post = new Post(track.getPostData());
+			post.setOnPostListener(new PostListener() {
+				
+				@Override
+				public void success(String content) { }
+				
+				@Override
+				public void failed(String message) { }
+			});
+
+			final URI uri = new AddressBuilder(this.mContext).add();
+
+			if (uri != null)
+				post.execute(uri);
 		}
 	}
 	
