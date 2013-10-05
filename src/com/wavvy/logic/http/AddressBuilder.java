@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 import android.content.Context;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.wavvy.R;
 import com.wavvy.logic.BaseContext;
 
@@ -49,11 +50,12 @@ public class AddressBuilder extends BaseContext {
 		}
 	}
 
-	public URI nearest(Double latitude, Double longitude, int userId) {
+	public URI nearest(LatLng location, int userId) {
 
 		final StringBuilder builder = new StringBuilder();
 		builder.append(this.getString(R.string.address_base));
-		builder.append(this.getString(R.string.address_nearest, latitude, longitude, userId));
+		builder.append(this.getString(R.string.address_nearest, 
+				location.latitude, location.longitude, userId));
 
 		try {
 			

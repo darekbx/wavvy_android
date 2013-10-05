@@ -28,4 +28,9 @@
     
     <string name="main_nick">Hi, %s</string>
     
+    <string name="nearest_user_id">id</string>
+    <string name="nearest_user_nick">nick</string>
+    <string name="nearest_user_distance">distance</string>
+    <string name="nearest_user_latitude">latitude</string>
+    <string name="nearest_user_longitude">longitude</string>
 </resources>

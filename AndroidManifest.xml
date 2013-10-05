@@ -4,13 +4,15 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="17" />
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17" />
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-     
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -25,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.wavvy.SongsActivity" android:label="@string/app_name" />
-        
+        <activity android:name="com.wavvy.MapActivity" android:label="@string/app_name" />
         <receiver android:name="com.wavvy.receivers.MusicReceiver" android:exported="true"> 
             <intent-filter> 
                 <action android:name="com.android.music.metachanged" />
@@ -33,6 +35,9 @@
                 <action android:name="com.andrew.apollo.metachanged" />
             </intent-filter> 
         </receiver>
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCGsWnqJhtCEK248bwlk8zUnpnoXiXb7P4" />
     </application>
 
 </manifest>

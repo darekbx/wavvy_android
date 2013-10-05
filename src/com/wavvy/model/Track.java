@@ -2,9 +2,11 @@ package com.wavvy.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.http.message.BasicNameValuePair;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.wavvy.logic.LocationManager;
 
 public class Track {
 
@@ -34,12 +36,10 @@ public class Track {
 		data.add(new BasicNameValuePair("title", this.mTitle));
 		
 		// TODO: latitude & longitude
-		final Random r = new Random();
-		double latitude = 51 + r.nextDouble();
-		double longitude = 21 + r.nextDouble();
+		final LatLng location = LocationManager.getRandom();
 
-		data.add(new BasicNameValuePair("latitude", String.valueOf(latitude)));
-		data.add(new BasicNameValuePair("longitude", String.valueOf(longitude)));
+		data.add(new BasicNameValuePair("latitude", String.valueOf(location.latitude)));
+		data.add(new BasicNameValuePair("longitude", String.valueOf(location.longitude)));
 		
 		return data;
 	}

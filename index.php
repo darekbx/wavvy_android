@@ -249,14 +249,20 @@ class Api {
             }
             
             // set user distance
-            if ($add)
-              $distances[$row['id_user']] = $distance;
+            if ($add) {
+            
+              $distances[$row['id_user']] = array(
+                "distance" => intval($distance), 
+                "latitude" => $row['latitude'], 
+                "longitude" => $row['longitude']
+              );
+            }
           }
           
           $data->close();
           
           // sort by distance
-          asort($distances);
+          usort($distances, $this->build_sorter('distance'));
           
           if (count($distances) > 0) {
           
@@ -270,7 +276,7 @@ class Api {
             $result = array();
             
             while ($row = $data->fetch_assoc())
-              $result[] = array_merge(array("distance" => intval($distances[$row['id']])), $row);
+              $result[] = array_merge($distances[$row['id']], $row);
             
             echo json_encode($result);
             $data->close();
@@ -356,6 +362,14 @@ class Api {
   function printSuccess($message) {
 
     echo json_encode(array("success" => $message));
+  }
+  
+  function build_sorter($key) {
+
+    return function ($a, $b) use ($key) {
+
+      return strnatcmp($a[$key], $b[$key]);
+    };
   }
 }
 

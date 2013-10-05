@@ -10,6 +10,9 @@ import com.wavvy.model.Track;
 import com.wavvy.model.User;
 
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.app.Activity;
@@ -39,6 +42,7 @@ public class MainActivity extends Activity {
 	private UserStorage mUserStorage;
 	private User mUser;
 	private NickDialog mDialog;
+	private Button mMapButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +78,9 @@ public class MainActivity extends Activity {
 		if (this.mRefreshReceiver != null)
 			this.unregisterReceiver(this.mRefreshReceiver);
 		
+		if (this.mMapButton != null)
+			this.mMapButton.setOnClickListener(null);
+		
 		super.onDestroy();
 	}
 
@@ -98,6 +105,17 @@ public class MainActivity extends Activity {
 				}
 			});
 		}
+		
+		this.mMapButton = (Button)this.findViewById(R.id.main_map);
+		this.mMapButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+
+				final Intent intent = new Intent(MainActivity.this, MapActivity.class);
+				MainActivity.this.startActivity(intent);
+			}
+		});
 	}
 	
 	private void loadUser() {
