@@ -43,6 +43,14 @@ public class UserStorage extends BaseContext {
 		return pref.getInt(this.getString(R.string.user_id_key), -1) > 0;
 	}
 	
+	public void reset() {
+	
+		final SharedPreferences pref = this.getPreferences();
+		final SharedPreferences.Editor editor = pref.edit();
+		editor.clear();
+		editor.commit();
+	}
+	
 	private SharedPreferences getPreferences() {
 
 		final SharedPreferences pref = this.getContext().getSharedPreferences(

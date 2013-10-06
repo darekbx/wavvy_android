@@ -5,8 +5,11 @@ import java.util.List;
 
 import org.apache.http.message.BasicNameValuePair;
 
+import android.content.Context;
+
 import com.google.android.gms.maps.model.LatLng;
-import com.wavvy.logic.LocationManager;
+import com.wavvy.R;
+import com.wavvy.logic.LocationHelper;
 
 public class Track {
 
@@ -27,19 +30,20 @@ public class Track {
 		this.mAlbum = album;
 	}
 	
-	public List<BasicNameValuePair> getPostData() {
+	public List<BasicNameValuePair> getPostData(Context context) {
 
+		String[] fields = context.getResources().getStringArray(R.array.post_fields);
+		
 		// id_user, artist, title, latitude, longitude
 		final List<BasicNameValuePair> data = new ArrayList<BasicNameValuePair>();
-		data.add(new BasicNameValuePair("id_user", String.valueOf(this.mUserId)));
-		data.add(new BasicNameValuePair("artist", this.mArtist));
-		data.add(new BasicNameValuePair("title", this.mTitle));
+		data.add(new BasicNameValuePair(fields[0], String.valueOf(this.mUserId)));
+		data.add(new BasicNameValuePair(fields[1], this.mArtist));
+		data.add(new BasicNameValuePair(fields[2], this.mTitle));
 		
-		// TODO: latitude & longitude
-		final LatLng location = LocationManager.getRandom();
+		final LatLng location = LocationHelper.getLoction(context);
 
-		data.add(new BasicNameValuePair("latitude", String.valueOf(location.latitude)));
-		data.add(new BasicNameValuePair("longitude", String.valueOf(location.longitude)));
+		data.add(new BasicNameValuePair(fields[3], String.valueOf(location.latitude)));
+		data.add(new BasicNameValuePair(fields[4], String.valueOf(location.longitude)));
 		
 		return data;
 	}

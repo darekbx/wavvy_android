@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import com.wavvy.R;
 import com.wavvy.listeners.GetListener;
+import com.wavvy.logic.LocationHelper;
 import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Get;
 import com.wavvy.logic.http.Utils;
@@ -45,6 +46,15 @@ public class NickDialog extends BaseDialog {
 
 		super.show();
 		
+		// check if gps is enabled
+		if (!LocationHelper.isLocationEnabled(this.getContext())) {
+		
+			this.showError(R.string.error_gps);
+			this.mNickBox.setEnabled(false);
+			
+			return;
+		}
+
 		this.getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 	}

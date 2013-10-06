@@ -8,8 +8,12 @@ import com.wavvy.logic.adapters.TrackAdapter;
 import com.wavvy.logic.storage.UserStorage;
 import com.wavvy.model.Track;
 import com.wavvy.model.User;
+import com.wavvy.services.GpsService;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -64,6 +68,8 @@ public class MainActivity extends Activity {
 		}
 		
 		this.registerListeners();
+		
+		this.startService(new Intent(this, GpsService.class));
 	}
 	
 	@Override
@@ -84,6 +90,32 @@ public class MainActivity extends Activity {
 		super.onDestroy();
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		
+		final MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.main_menu, menu);
+	    
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+		
+			// TODO: remove reset option
+			case R.id.menu_reset:
+				
+				this.mUserStorage.reset();
+				new StorageManager(this).reset();
+				
+				break;
+		}
+		
+		return super.onOptionsItemSelected(item);
+	}
+	
 	private void registerListeners() {
 
 		if (this.mDialog != null) {

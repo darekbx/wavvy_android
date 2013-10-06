@@ -70,7 +70,7 @@ public class MusicReceiver extends BroadcastReceiver {
 			track.setUserId(storage.getUser().getId());
 			
 			// save
-			final Post post = new Post(track.getPostData());
+			final Post post = new Post(track.getPostData(this.mContext));
 			post.setOnPostListener(new PostListener() {
 				
 				@Override

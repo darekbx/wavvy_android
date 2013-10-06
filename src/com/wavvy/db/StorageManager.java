@@ -80,7 +80,12 @@ public class StorageManager extends BaseContext {
 		
 		return items;
 	}
+	
+	public Boolean reset() {
 
+		return this.mDataBase.delete(this.trackTableName(), null, null) > 0;
+	}
+	
 	private Track getTrackFromCursor(Cursor cursor) {
 
 		final Track track = new Track();

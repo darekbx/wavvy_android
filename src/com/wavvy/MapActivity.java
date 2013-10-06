@@ -13,7 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.wavvy.listeners.GetListener;
-import com.wavvy.logic.LocationManager;
+import com.wavvy.logic.LocationHelper;
 import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Get;
 import com.wavvy.logic.storage.UserStorage;
@@ -49,8 +49,7 @@ public class MapActivity extends FragmentActivity {
 	
 		this.mUser = new UserStorage(this).getUser();
 
-		// TODO: latitude & longitude
-		final LatLng location = LocationManager.getRandom();
+		final LatLng location = LocationHelper.getLoction(this);
 		
 		final URI address = new AddressBuilder(this).nearest(location, this.mUser.getId());
 		final Get get = new Get();
