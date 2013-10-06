@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     
     <application
@@ -35,6 +34,11 @@
                 <action android:name="com.andrew.apollo.metachanged" />
             </intent-filter> 
         </receiver>
+        <service android:name="com.wavvy.services.GpsService"
+            android:permission="android.permission.ACCESS_FINE_LOCATION"
+            android:label="@string/service_name"
+            android:exported="true"
+            android:enabled="true" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCGsWnqJhtCEK248bwlk8zUnpnoXiXb7P4" />
