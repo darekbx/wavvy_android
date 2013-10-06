@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="nearest_fields">
+	    <item>id</item>
+	    <item>nick</item>
+	    <item>distance</item>
+	    <item>latitude</item>
+	    <item>longitude</item>
+    </string-array>
+</resources>

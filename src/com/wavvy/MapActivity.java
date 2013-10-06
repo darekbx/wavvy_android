@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -69,6 +70,7 @@ public class MapActivity extends FragmentActivity {
 
 							MapActivity.this.zoomToUser();
 							MapActivity.this.addOtherUsers();
+							MapActivity.this.addMyLocation();
 						}
 					});
 				}
@@ -104,6 +106,16 @@ public class MapActivity extends FragmentActivity {
 			this.addMarker(this.mNearestUsers[i]);
 	}
 	
+	private void addMyLocation() {
+	
+		final LatLng location = LocationHelper.getLoction(this);
+
+		final MarkerOptions markerOptions = new MarkerOptions()
+			.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_flag))
+			.position(location);
+		this.mMap.addMarker(markerOptions);
+	}
+	
 	private Marker addMarker(final NearestUser nearestUser) {
 
 		final MarkerOptions markerOptions = new MarkerOptions()
@@ -120,6 +132,7 @@ public class MapActivity extends FragmentActivity {
 			
 			final JSONArray array = new JSONArray(content);
 			final int count = array.length();
+			final String[] fields = this.getResources().getStringArray(R.array.nearest_fields);
 			
 			this.mNearestUsers = new NearestUser[count];
 			
@@ -131,11 +144,11 @@ public class MapActivity extends FragmentActivity {
 				jo = array.getJSONObject(i);
 				
 				user = new NearestUser();
-				user.setId(jo.optInt(this.getString(R.string.nearest_user_id)));
-				user.setNick(jo.optString(this.getString(R.string.nearest_user_nick)));
-				user.setDistance(jo.optInt(this.getString(R.string.nearest_user_distance)));
-				user.setLatitude(jo.optDouble(this.getString(R.string.nearest_user_latitude)));
-				user.setLongitude(jo.optDouble(this.getString(R.string.nearest_user_longitude)));
+				user.setId(jo.optInt(fields[0]));
+				user.setNick(jo.optString(fields[1]));
+				user.setDistance(jo.optInt(fields[2]));
+				user.setLatitude(jo.optDouble(fields[3]));
+				user.setLongitude(jo.optDouble(fields[4]));
 				
 				this.mNearestUsers[i] = user;
 			}

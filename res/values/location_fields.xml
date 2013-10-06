@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="location_fields">
+        <item>id_user</item>
+        <item>artist</item>
+        <item>title</item>
+        <item>latitude</item>
+        <item>longitude</item>
+    </string-array>
+</resources>

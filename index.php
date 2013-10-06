@@ -262,14 +262,14 @@ class Api {
           $data->close();
           
           // sort by distance
-          usort($distances, $this->build_sorter('distance'));
+          uasort($distances, $this->build_sorter('distance'));
           
           if (count($distances) > 0) {
           
             // limit nearest users
             $distances = array_slice($distances, 0, $this->maxNearest, true);
             $ids = implode(",", array_keys($distances));
-
+            
             // get detailed user info
             $select = "SELECT * FROM `user` WHERE `id` IN (". $ids .") ORDER BY FIELD (id, ". $ids .")";
             $data = $this->connection->query($select);

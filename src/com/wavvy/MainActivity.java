@@ -47,6 +47,7 @@ public class MainActivity extends Activity {
 	private User mUser;
 	private NickDialog mDialog;
 	private Button mMapButton;
+	private Button mMyLocationsButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +87,9 @@ public class MainActivity extends Activity {
 		
 		if (this.mMapButton != null)
 			this.mMapButton.setOnClickListener(null);
+
+		if (this.mMyLocationsButton != null)
+			this.mMyLocationsButton.setOnClickListener(null);
 		
 		super.onDestroy();
 	}
@@ -145,6 +149,17 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 
 				final Intent intent = new Intent(MainActivity.this, MapActivity.class);
+				MainActivity.this.startActivity(intent);
+			}
+		});
+
+		this.mMyLocationsButton = (Button)this.findViewById(R.id.main_my_locations);
+		this.mMyLocationsButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+
+				final Intent intent = new Intent(MainActivity.this, MyLocationsActivity.class);
 				MainActivity.this.startActivity(intent);
 			}
 		});
