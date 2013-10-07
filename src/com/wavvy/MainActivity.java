@@ -5,6 +5,7 @@ import java.util.List;
 import com.wavvy.db.StorageManager;
 import com.wavvy.dialog.NickDialog;
 import com.wavvy.logic.adapters.TrackAdapter;
+import com.wavvy.logic.http.Utils;
 import com.wavvy.logic.storage.UserStorage;
 import com.wavvy.model.Track;
 import com.wavvy.model.User;
@@ -19,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -59,7 +61,7 @@ public class MainActivity extends Activity {
 		this.mUserStorage = new UserStorage(this);
 		
 		// TODO:
-		//this.mUserStorage.setUser(new User(4, "Madzia")); 
+		//this.mUserStorage.setUser(new User(4, "User")); 
 		//
 		
 		if (!this.mUserStorage.isUserExists()) {
@@ -68,7 +70,11 @@ public class MainActivity extends Activity {
 			this.mDialog.show();
 		}
 		else {
-		
+
+			// check internet
+			if (!Utils.isOnline(this))
+				Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_LONG).show();
+
 			this.loadUser();
 		}
 		
