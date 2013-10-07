@@ -33,7 +33,8 @@ $api->disconnect();
 
 class Api {
 
-  private $maxNearest = 10;
+  private $maxNearest = 10; // return max 10 nearest users
+  private $maxTime = 5; // 5 minutes
   private $connection;
   
   function connect() {
@@ -118,7 +119,73 @@ class Api {
         $stmt->execute();
         $stmt->close();
         
-        $this->printSuccess("added");
+        // search for nearest user
+        $sql = "SELECT id, id_user, latitude, longitude, artist, title FROM `song` ".
+               "WHERE id_user <> ? AND `date` >= (NOW() - INTERVAL ".$this->maxTime." MINUTE)";
+        
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        $distances = array();
+        
+        if ($result) {
+          
+          while ($row = $result->fetch_assoc()) {
+          
+            $distance = $this->haversineGreatCircleDistance($lat, $lon, $row['latitude'], $row['longitude']);
+            $add = true;
+            
+            // if exists, check if new distance is smaller
+            if (array_key_exists($row['id_user'], $distances)) {
+            
+              $existing = $distances[$row['id_user']];
+              $add = $existing > $distance;
+            }
+            
+            // set user distance
+            if ($add) {
+            
+              $distances[$row['id_user']] = array(
+                "distance" => intval($distance), 
+                "latitude" => $row['latitude'], 
+                "longitude" => $row['longitude'],
+                "artist" => $row['artist'],
+                "title" => $row['title']
+              );
+            }
+          }
+          
+          if (count($distances) > 0) {
+          
+            // sort by distance
+            uasort($distances, $this->build_sorter('distance'));
+            
+            // get one user
+            reset($distances);
+            list($id_user, $values) = each($distances);
+            
+            // get detailed user info
+            $select = "SELECT * FROM `user` WHERE `id` = ".$id_user;
+            $data = $this->connection->query($select);
+            
+            if ($data) {
+            
+              // {"id":"4","nick":"Madzia","created":"2013-10-06 12:58:26","distance":1312,"latitude":51.2,"longitude":43.2,"artist":"Mozart","title":"Requiem"}
+              echo json_encode(array_merge($data->fetch_assoc(), $values));
+              $data->close();
+            }
+            else
+              $this->printSuccess("added");
+          }
+          else 
+            $this->printSuccess("added");
+        }
+        else 
+          $this->printSuccess("added");
+        
+        $stmt->close();
       }
     } 
     catch (Exception $e) {
@@ -223,7 +290,7 @@ class Api {
         $lon = doubleval($get['longitude']);
         $id_user = $get['id_user'];
         
-        $select = "SELECT id, id_user, latitude, longitude FROM `song`";
+        $select = "SELECT id, id_user, latitude, longitude, artist, title FROM `song`";
         $data = $this->connection->query($select);
         
         if ($data) {
@@ -254,7 +321,9 @@ class Api {
               $distances[$row['id_user']] = array(
                 "distance" => intval($distance), 
                 "latitude" => $row['latitude'], 
-                "longitude" => $row['longitude']
+                "longitude" => $row['longitude'],
+                "artist" => $row['artist'],
+                "title" => $row['title']
               );
             }
           }
@@ -327,6 +396,7 @@ class Api {
   
   function drop() {
   
+    //$sql = "DELETE FROM `song` WHERE id >= 27";
     $sql = "DROP TABLE IF EXISTS `user`";
     $this->connection()->query($sql);
     
