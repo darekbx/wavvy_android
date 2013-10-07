@@ -58,6 +58,10 @@ public class MainActivity extends Activity {
 		
 		this.mUserStorage = new UserStorage(this);
 		
+		// TODO:
+		//this.mUserStorage.setUser(new User(4, "Madzia")); 
+		//
+		
 		if (!this.mUserStorage.isUserExists()) {
 		
 			this.mDialog = new NickDialog(this);

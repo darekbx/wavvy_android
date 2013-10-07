@@ -3,6 +3,8 @@
     <string-array name="nearest_fields">
 	    <item>id</item>
 	    <item>nick</item>
+        <item>artist</item>
+        <item>title</item>
 	    <item>distance</item>
 	    <item>latitude</item>
 	    <item>longitude</item>

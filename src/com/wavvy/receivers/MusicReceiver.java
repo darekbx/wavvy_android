@@ -2,6 +2,10 @@ package com.wavvy.receivers;
 
 import java.net.URI;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.wavvy.R;
 import com.wavvy.MainActivity.RefreshReceiver;
 import com.wavvy.db.StorageManager;
 import com.wavvy.listeners.PostListener;
@@ -10,11 +14,16 @@ import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Post;
 import com.wavvy.logic.http.Utils;
 import com.wavvy.logic.storage.UserStorage;
+import com.wavvy.model.NearestUser;
 import com.wavvy.model.Track;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 
 public class MusicReceiver extends BroadcastReceiver {
 	
@@ -74,7 +83,10 @@ public class MusicReceiver extends BroadcastReceiver {
 			post.setOnPostListener(new PostListener() {
 				
 				@Override
-				public void success(String content) { }
+				public void success(String content) { 
+					
+					MusicReceiver.this.parseResponse(content);
+				}
 				
 				@Override
 				public void failed(String message) { }
@@ -85,6 +97,52 @@ public class MusicReceiver extends BroadcastReceiver {
 			if (uri != null)
 				post.execute(uri);
 		}
+	}
+	
+	private void parseResponse(final String response) {
+
+		try {
+
+			final JSONObject jo = new JSONObject(response);
+			
+			if (!jo.has(this.mContext.getString(R.string.response_success))) {
+
+				final NearestUser user = new NearestUser();
+				user.fromJsonObject(jo, this.mContext);
+				
+				this.sendNotification(user);
+			}
+		} 
+		catch (JSONException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	private void sendNotification(final NearestUser user) {
+
+		final String title = this.mContext.getString(
+				R.string.notification_title, 
+				user.getDistance());
+
+		final String text = this.mContext.getString(
+				R.string.notification_text, 
+				user.getNick(), 
+				user.toString());
+		
+		final Notification notification = new NotificationCompat.Builder(this.mContext)
+			.setContentTitle(title)
+			.setContentText(text)
+			.setSmallIcon(R.drawable.ic_launcher)
+			.setContentIntent(PendingIntent.getService(this.mContext, 0, new Intent(), 0))
+			.build();
+		
+		final String service = Context.NOTIFICATION_SERVICE; 
+		final NotificationManager notificationManager = 
+				  (NotificationManager)this.mContext.getSystemService(service);
+
+		notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		notificationManager.notify(0, notification);
 	}
 	
 	private void notifyNewTrack() {

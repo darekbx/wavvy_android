@@ -30,5 +30,10 @@
     <string name="error_gps">Please enable GPS.</string>
     
     <string name="main_nick">Hi, %s</string>
+    <string name="nick_distance" formatted="false">%s (%sm)</string>
+    <string name="response_success">success</string>
+    
+    <string name="notification_title">Nearest user, %s meters</string>
+    <string name="notification_text" formatted="false">%s, %s</string>
     
 </resources>

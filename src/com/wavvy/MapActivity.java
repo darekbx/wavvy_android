@@ -8,11 +8,13 @@ import org.json.JSONObject;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import com.wavvy.listeners.GetListener;
 import com.wavvy.logic.LocationHelper;
 import com.wavvy.logic.http.AddressBuilder;
@@ -24,6 +26,7 @@ import com.wavvy.model.User;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
 import android.widget.Toast;
 
 public class MapActivity extends FragmentActivity {
@@ -42,8 +45,27 @@ public class MapActivity extends FragmentActivity {
 		
 		final Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.map);
 		this.mMap = ((SupportMapFragment)fragment).getMap();
+		this.mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+			
+			@Override
+			public View getInfoWindow(Marker marker) {
+				
+				return MapActivity.this.getCustomInfoWindow(marker);
+			}
+			
+			@Override
+			public View getInfoContents(Marker marker) {
+				
+				return null;
+			}
+		});
 		
 		this.loadNearestUsers();
+	}
+	
+	private View getCustomInfoWindow(final Marker marker) {
+		
+		return null;
 	}
 	
 	private void loadNearestUsers() {
@@ -90,7 +112,7 @@ public class MapActivity extends FragmentActivity {
 	private void zoomToUser() {
 
 		final Marker userMarker = this.addMarker(this.mNearestUsers[0]);
-				
+		
 		this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userMarker.getPosition(), 8));
 		this.mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
 	}
@@ -118,11 +140,16 @@ public class MapActivity extends FragmentActivity {
 	
 	private Marker addMarker(final NearestUser nearestUser) {
 
+		final String title = this.getString(R.string.nick_distance, 
+				nearestUser.getNick(), 
+				nearestUser.getDistance());
+		
 		final MarkerOptions markerOptions = new MarkerOptions()
 			.position(nearestUser.getPosition())
-			.title(nearestUser.getNick());
+			.title(title)
+			.snippet(nearestUser.toString());
 		final Marker marker = this.mMap.addMarker(markerOptions);
-
+		
 		return marker;
 	}
 	
@@ -132,7 +159,6 @@ public class MapActivity extends FragmentActivity {
 			
 			final JSONArray array = new JSONArray(content);
 			final int count = array.length();
-			final String[] fields = this.getResources().getStringArray(R.array.nearest_fields);
 			
 			this.mNearestUsers = new NearestUser[count];
 			
@@ -144,11 +170,7 @@ public class MapActivity extends FragmentActivity {
 				jo = array.getJSONObject(i);
 				
 				user = new NearestUser();
-				user.setId(jo.optInt(fields[0]));
-				user.setNick(jo.optString(fields[1]));
-				user.setDistance(jo.optInt(fields[2]));
-				user.setLatitude(jo.optDouble(fields[3]));
-				user.setLongitude(jo.optDouble(fields[4]));
+				user.fromJsonObject(jo, this);
 				
 				this.mNearestUsers[i] = user;
 			}
