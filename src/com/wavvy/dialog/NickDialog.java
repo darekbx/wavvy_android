@@ -1,6 +1,8 @@
 package com.wavvy.dialog;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,7 +63,7 @@ public class NickDialog extends BaseDialog {
 
 	private void checkNick() {
 
-		final String nick = this.mNickBox.getText().toString();
+		final String nick = this.getEncodedNick();
 		
 		// check internet
 		if (!Utils.isOnline(this.getContext())) {
@@ -102,6 +104,22 @@ public class NickDialog extends BaseDialog {
 		}
 		else 
 			return;
+	}
+	
+	private String getEncodedNick() {
+	
+		final String collation = this.getString(R.string.collation);
+		
+		try {
+		
+			return URLEncoder.encode(this.mNickBox.getText().toString(), collation);
+		}
+		catch (UnsupportedEncodingException e) {
+
+			e.printStackTrace();
+			
+			return this.mNickBox.getText().toString();
+		}
 	}
 	
 	private void processResponse(final String content) {

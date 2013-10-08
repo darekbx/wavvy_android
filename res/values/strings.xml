@@ -3,6 +3,7 @@
 
     <string name="app_name">Wavvy</string>
     <string name="service_name">Wavvy GPS service</string>
+    <string name="collation">utf-8</string>
     
     <string name="menu_songs">Songs</string>
     <string name="menu_map">Map</string>

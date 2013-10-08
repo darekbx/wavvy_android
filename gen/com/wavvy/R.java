@@ -230,10 +230,10 @@ containing a value of this type.
         public static final int main_menu=0x7f090000;
     }
     public static final class string {
-        public static final int address_base=0x7f060020;
-        public static final int address_nearest=0x7f060023;
-        public static final int address_registernick=0x7f060021;
-        public static final int address_userlocations=0x7f060022;
+        public static final int address_base=0x7f060021;
+        public static final int address_nearest=0x7f060024;
+        public static final int address_registernick=0x7f060022;
+        public static final int address_userlocations=0x7f060023;
         public static final int app_name=0x7f060019;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
@@ -258,6 +258,7 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f060013;
+        public static final int collation=0x7f06001b;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -325,37 +326,37 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060012;
-        public static final int db_name=0x7f060034;
-        public static final int db_track_create_syntax=0x7f060036;
-        public static final int db_track_insert=0x7f060037;
-        public static final int db_track_tablename=0x7f060035;
-        public static final int db_where_id=0x7f060038;
-        public static final int dot_format=0x7f06001f;
-        public static final int error_gps=0x7f06002e;
-        public static final int error_no_internet=0x7f06002c;
-        public static final int error_unknown=0x7f06002d;
-        public static final int main_nick=0x7f06002f;
-        public static final int menu_map=0x7f06001c;
-        public static final int menu_my_locations=0x7f06001d;
-        public static final int menu_reset=0x7f06001e;
-        public static final int menu_songs=0x7f06001b;
-        public static final int nick_count=0x7f060028;
-        public static final int nick_distance=0x7f060030;
-        public static final int nick_empty=0x7f060025;
-        public static final int nick_enter_nick=0x7f060024;
-        public static final int nick_id=0x7f060029;
-        public static final int nick_reserved=0x7f060027;
-        public static final int nick_too_short=0x7f060026;
-        public static final int notification_text=0x7f060033;
-        public static final int notification_title=0x7f060032;
-        public static final int receiver_album_key=0x7f06003b;
-        public static final int receiver_artist_key=0x7f06003a;
-        public static final int receiver_id_key=0x7f060039;
-        public static final int receiver_track_key=0x7f06003c;
-        public static final int response_success=0x7f060031;
+        public static final int db_name=0x7f060035;
+        public static final int db_track_create_syntax=0x7f060037;
+        public static final int db_track_insert=0x7f060038;
+        public static final int db_track_tablename=0x7f060036;
+        public static final int db_where_id=0x7f060039;
+        public static final int dot_format=0x7f060020;
+        public static final int error_gps=0x7f06002f;
+        public static final int error_no_internet=0x7f06002d;
+        public static final int error_unknown=0x7f06002e;
+        public static final int main_nick=0x7f060030;
+        public static final int menu_map=0x7f06001d;
+        public static final int menu_my_locations=0x7f06001e;
+        public static final int menu_reset=0x7f06001f;
+        public static final int menu_songs=0x7f06001c;
+        public static final int nick_count=0x7f060029;
+        public static final int nick_distance=0x7f060031;
+        public static final int nick_empty=0x7f060026;
+        public static final int nick_enter_nick=0x7f060025;
+        public static final int nick_id=0x7f06002a;
+        public static final int nick_reserved=0x7f060028;
+        public static final int nick_too_short=0x7f060027;
+        public static final int notification_text=0x7f060034;
+        public static final int notification_title=0x7f060033;
+        public static final int receiver_album_key=0x7f06003c;
+        public static final int receiver_artist_key=0x7f06003b;
+        public static final int receiver_id_key=0x7f06003a;
+        public static final int receiver_track_key=0x7f06003d;
+        public static final int response_success=0x7f060032;
         public static final int service_name=0x7f06001a;
-        public static final int user_id_key=0x7f06002b;
-        public static final int user_nick_key=0x7f06002a;
+        public static final int user_id_key=0x7f06002c;
+        public static final int user_nick_key=0x7f06002b;
     }
     public static final class style {
         /** 
