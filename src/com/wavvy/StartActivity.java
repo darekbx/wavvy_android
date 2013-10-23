@@ -1,6 +1,8 @@
 package com.wavvy;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +20,7 @@ import com.wavvy.logic.LocationHelper;
 import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Get;
 import com.wavvy.logic.http.Utils;
+import com.wavvy.logic.storage.UserStorage;
 import com.wavvy.model.SongLocation;
 
 import android.content.BroadcastReceiver;
@@ -40,7 +43,8 @@ public class StartActivity extends FragmentActivity {
 	}
 
 	private GoogleMap mMap;
-	private SongLocation[] mSongs;
+	private List<SongLocation> mSongs;
+	private int mUserId = -1;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +59,19 @@ public class StartActivity extends FragmentActivity {
 		
 		if (!Utils.isOnline(this))
 			Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_LONG).show();
-		else
+		else {
+			
+			this.loadUser();
 			this.loadPoints();
+		}
+	}
+	
+	private void loadUser() {
+	
+		final UserStorage storage = new UserStorage(this);
+		
+		if (storage.isUserExists())
+			this.mUserId = storage.getUser().getId();
 	}
 	
 	private void loadPoints() {
@@ -76,7 +91,7 @@ public class StartActivity extends FragmentActivity {
 					public void run() {
 
 						StartActivity.this.zoomToUser();
-						StartActivity.this.addOtherUsers();
+						StartActivity.this.addPoints();
 						StartActivity.this.addMyLocation();
 					}
 				});
@@ -95,21 +110,21 @@ public class StartActivity extends FragmentActivity {
 	
 	private void zoomToUser() {
 
-		final Marker userMarker = this.addMarker(this.mSongs[0]);
+		final Marker userMarker = this.addMarker(this.mSongs.get(0));
 		
 		this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userMarker.getPosition(), 8));
 		this.mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
 	}
 	
-	private void addOtherUsers() {
+	private void addPoints() {
 		
-		final int count = this.mSongs.length;
+		final int count = this.mSongs.size();
 		
-		if (count <= 1)
+		if (count == 0)
 			return;
 		
-		for (int i = 1; i < count; i++)
-			this.addMarker(this.mSongs[i]);
+		for (int i = 0; i < count; i++)
+			this.addMarker(this.mSongs.get(i));
 	}
 	
 	private void addMyLocation() {
@@ -140,7 +155,7 @@ public class StartActivity extends FragmentActivity {
 			final JSONArray array = new JSONArray(content);
 			final int count = array.length();
 			
-			this.mSongs = new SongLocation[count];
+			this.mSongs = new ArrayList<SongLocation>();
 			
 			JSONObject jo;
 			SongLocation user;
@@ -152,7 +167,11 @@ public class StartActivity extends FragmentActivity {
 				user = new SongLocation();
 				user.fromJsonObject(jo, this);
 				
-				this.mSongs[i] = user;
+				// skip my track
+				if (this.mUserId == user.getIdUser())
+					continue;
+				
+				this.mSongs.add(user);
 			}
 		} 
 		catch (JSONException e) {
