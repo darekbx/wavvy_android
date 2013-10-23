@@ -12,6 +12,7 @@
     <string name="dot_format">%s.</string>
     
     <string name="address_base">http://darekdev.cba.pl/</string>
+    <string name="address_locations">"?action=locations"</string>
     <string name="address_registernick">"?action=registernick&amp;nick=%s"</string>
     <string name="address_userlocations">"?action=userlocations&amp;id_user=%s"</string>
     <string name="address_nearest" formatted="false">"?action=nearest&amp;latitude=%s&amp;longitude=%s&amp;id_user=%s"</string>
@@ -33,6 +34,7 @@
     <string name="main_nick">Hi, %s</string>
     <string name="nick_distance" formatted="false">%s (%sm)</string>
     <string name="response_success">success</string>
+    <string name="response_id_user">id_user</string>
     
     <string name="notification_title">Nearest user, %s meters</string>
     <string name="notification_text" formatted="false">%s, %s</string>

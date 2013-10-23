@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.wavvy.R;
-import com.wavvy.MainActivity.RefreshReceiver;
+import com.wavvy.StartActivity.RefreshReceiver;
 import com.wavvy.db.StorageManager;
 import com.wavvy.listeners.PostListener;
 import com.wavvy.logic.Scrobbler;
@@ -14,16 +14,12 @@ import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Post;
 import com.wavvy.logic.http.Utils;
 import com.wavvy.logic.storage.UserStorage;
-import com.wavvy.model.NearestUser;
 import com.wavvy.model.Track;
+import com.wavvy.model.User;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 
 public class MusicReceiver extends BroadcastReceiver {
 	
@@ -72,11 +68,12 @@ public class MusicReceiver extends BroadcastReceiver {
 
 			// set user id
 			final UserStorage storage = new UserStorage(this.mContext);
+			int userId = -1;
 			
-			if (!storage.isUserExists())
-				return;
+			if (storage.isUserExists())
+				userId = storage.getUser().getId();
 			
-			track.setUserId(storage.getUser().getId());
+			track.setUserId(userId);
 			
 			// save
 			final Post post = new Post(track.getPostData(this.mContext));
@@ -103,15 +100,31 @@ public class MusicReceiver extends BroadcastReceiver {
 
 		try {
 
+			final UserStorage storage = new UserStorage(this.mContext);
+
+			// do nothing if user exists 
+			if (storage.isUserExists())
+				return;
+			
+			// if user is missing then parse json and get created id_user
 			final JSONObject jo = new JSONObject(response);
 			
-			if (!jo.has(this.mContext.getString(R.string.response_success))) {
+			if (jo.has(this.mContext.getString(R.string.response_id_user))) {
+			
+				// created new user
+				final User user = new User();
+				
+				user.fromJsonObject(jo, this.mContext);
+				storage.setUser(user);
+			}
+			
+			/*if (!jo.has(this.mContext.getString(R.string.response_success))) {
 
 				final NearestUser user = new NearestUser();
 				user.fromJsonObject(jo, this.mContext);
 				
 				this.sendNotification(user);
-			}
+			}*/
 		} 
 		catch (JSONException e) {
 			
@@ -119,7 +132,7 @@ public class MusicReceiver extends BroadcastReceiver {
 		}
 	}
 	
-	private void sendNotification(final NearestUser user) {
+	/*private void sendNotification(final NearestUser user) {
 
 		final String title = this.mContext.getString(
 				R.string.notification_title, 
@@ -143,7 +156,7 @@ public class MusicReceiver extends BroadcastReceiver {
 
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notificationManager.notify(0, notification);
-	}
+	}*/
 	
 	private void notifyNewTrack() {
 		

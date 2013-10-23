@@ -1,5 +1,11 @@
 package com.wavvy.model;
 
+import org.json.JSONObject;
+
+import android.content.Context;
+
+import com.wavvy.R;
+
 public class User {
 	
 	private int mId;
@@ -12,7 +18,13 @@ public class User {
 		this.mId = id;
 		this.mNick = nick;
 	}
-	
+
+	public void fromJsonObject(JSONObject jo, Context context) {
+
+		final String field = context.getString(R.string.response_id_user);
+		this.setId(jo.optInt(field));
+	}
+
 	public int getId() {
 		return this.mId;
 	}

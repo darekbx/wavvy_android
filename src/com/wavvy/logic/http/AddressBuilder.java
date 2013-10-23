@@ -16,6 +16,7 @@ public class AddressBuilder extends BaseContext {
 		super(context);
 	}
 
+	@Deprecated
 	public URI registerNick(String nick) {
 
 		final StringBuilder builder = new StringBuilder();
@@ -33,6 +34,7 @@ public class AddressBuilder extends BaseContext {
 		}
 	}
 
+	@Deprecated
 	public URI userLocations(int userId) {
 
 		final StringBuilder builder = new StringBuilder();
@@ -50,12 +52,30 @@ public class AddressBuilder extends BaseContext {
 		}
 	}
 
+	@Deprecated
 	public URI nearest(LatLng location, int userId) {
 
 		final StringBuilder builder = new StringBuilder();
 		builder.append(this.getString(R.string.address_base));
 		builder.append(this.getString(R.string.address_nearest, 
 				location.latitude, location.longitude, userId));
+
+		try {
+			
+			return new URI(builder.toString());
+		} 
+		catch (URISyntaxException e) {
+			
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public URI locations() {
+
+		final StringBuilder builder = new StringBuilder();
+		builder.append(this.getString(R.string.address_base));
+		builder.append(this.getString(R.string.address_locations));
 
 		try {
 			

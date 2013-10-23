@@ -31,7 +31,7 @@ public class UserStorage extends BaseContext {
 		final SharedPreferences pref = this.getPreferences();
 		
 		final User user = new User();
-		user.setId(pref.getInt(this.getString(R.string.user_id_key), 0));
+		user.setId(pref.getInt(this.getString(R.string.user_id_key), -1));
 		user.setNick(pref.getString(this.getString(R.string.user_nick_key), new String()));
 		
 		return user;

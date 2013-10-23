@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
+@Deprecated
 public class MyLocationsActivity extends FragmentActivity {
 
 	private GoogleMap mMap;

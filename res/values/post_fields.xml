@@ -4,6 +4,7 @@
         <item>id_user</item>
         <item>artist</item>
         <item>title</item>
+        <item>album</item>
         <item>latitude</item>
         <item>longitude</item>
     </string-array>

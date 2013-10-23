@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.widget.ListView;
 
+@Deprecated
 public class SongsActivity extends Activity {
 
 	public class RefreshReceiver extends BroadcastReceiver {

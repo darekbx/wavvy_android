@@ -30,6 +30,7 @@ import android.content.IntentFilter;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 
+@Deprecated
 public class MainActivity extends Activity {
 
 	public class RefreshReceiver extends BroadcastReceiver {

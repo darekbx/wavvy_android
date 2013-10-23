@@ -34,16 +34,17 @@ public class Track {
 
 		String[] fields = context.getResources().getStringArray(R.array.post_fields);
 		
-		// id_user, artist, title, latitude, longitude
+		// id_user, artist, title, album, latitude, longitude
 		final List<BasicNameValuePair> data = new ArrayList<BasicNameValuePair>();
 		data.add(new BasicNameValuePair(fields[0], String.valueOf(this.mUserId)));
 		data.add(new BasicNameValuePair(fields[1], this.mArtist));
 		data.add(new BasicNameValuePair(fields[2], this.mTitle));
+		data.add(new BasicNameValuePair(fields[3], this.mAlbum));
 		
 		final LatLng location = LocationHelper.getLoction(context);
 
-		data.add(new BasicNameValuePair(fields[3], String.valueOf(location.latitude)));
-		data.add(new BasicNameValuePair(fields[4], String.valueOf(location.longitude)));
+		data.add(new BasicNameValuePair(fields[4], String.valueOf(location.latitude)));
+		data.add(new BasicNameValuePair(fields[5], String.valueOf(location.longitude)));
 		
 		return data;
 	}

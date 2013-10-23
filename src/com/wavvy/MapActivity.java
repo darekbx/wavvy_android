@@ -20,7 +20,7 @@ import com.wavvy.logic.LocationHelper;
 import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Get;
 import com.wavvy.logic.storage.UserStorage;
-import com.wavvy.model.NearestUser;
+import com.wavvy.model.SongLocation;
 import com.wavvy.model.User;
 
 import android.os.Bundle;
@@ -29,12 +29,13 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Toast;
 
+@Deprecated
 public class MapActivity extends FragmentActivity {
 
 	private GoogleMap mMap;
 	private User mUser;
 	
-	private NearestUser[] mNearestUsers = null;
+	private SongLocation[] mNearestUsers = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -138,11 +139,11 @@ public class MapActivity extends FragmentActivity {
 		this.mMap.addMarker(markerOptions);
 	}
 	
-	private Marker addMarker(final NearestUser nearestUser) {
+	private Marker addMarker(final SongLocation nearestUser) {
 
 		final String title = this.getString(R.string.nick_distance, 
-				nearestUser.getNick(), 
-				nearestUser.getDistance());
+				nearestUser.getAlbum(), 
+				nearestUser.getDate());
 		
 		final MarkerOptions markerOptions = new MarkerOptions()
 			.position(nearestUser.getPosition())
@@ -160,16 +161,16 @@ public class MapActivity extends FragmentActivity {
 			final JSONArray array = new JSONArray(content);
 			final int count = array.length();
 			
-			this.mNearestUsers = new NearestUser[count];
+			this.mNearestUsers = new SongLocation[count];
 			
 			JSONObject jo;
-			NearestUser user;
+			SongLocation user;
 			
 			for (int i = 0; i < count; i++) {
 			
 				jo = array.getJSONObject(i);
 				
-				user = new NearestUser();
+				user = new SongLocation();
 				user.fromJsonObject(jo, this);
 				
 				this.mNearestUsers[i] = user;
