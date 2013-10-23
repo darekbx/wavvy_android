@@ -1,12 +1,7 @@
 package com.wavvy;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.LinkedHashMap;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,11 +13,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.wavvy.animations.MenuAnimation;
+import com.wavvy.listeners.ActionListener;
 import com.wavvy.listeners.GetListener;
+import com.wavvy.listeners.TickListener;
+import com.wavvy.logic.LikeManager;
 import com.wavvy.logic.LocationHelper;
+import com.wavvy.logic.UpdateTimer;
 import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Get;
 import com.wavvy.logic.http.Utils;
+import com.wavvy.logic.parsers.LocationParser;
 import com.wavvy.logic.storage.UserStorage;
 import com.wavvy.model.SongLocation;
 
@@ -33,6 +33,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -43,13 +45,16 @@ public class StartActivity extends FragmentActivity {
 	    @Override
 	    public void onReceive(Context context, Intent intent) {
 
-	    	StartActivity.this.newSong();
+	    	/* do nothing */
 	    }
 	}
 
+	private LinkedHashMap<SongLocation, Marker> mSongs;
 	private GoogleMap mMap;
-	private List<SongLocation> mSongs;
-	private LinearLayout mMenu;
+	private MenuAnimation mMenuAnimation;
+	private ImageButton mMessage;
+	private ImageButton mLike;
+	private Marker mActiveMarker = null;
 	private int mUserId = -1;
 	
 	@Override
@@ -69,10 +74,29 @@ public class StartActivity extends FragmentActivity {
 			Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_LONG).show();
 		else {
 			
-			this.collapseMenu();
+			UpdateTimer.setTickListener(this.mTick);
+			
+			this.loadMenuAnimation();
+			this.loadEvents();
 			this.loadUser();
-			this.loadPoints();
+			this.loadPoints(false);
 		}
+	}
+	
+	@Override
+	protected void onResume() {
+
+		super.onResume();
+		
+		UpdateTimer.start();
+	}
+	
+	@Override
+	protected void onPause() {
+		
+		super.onPause();
+		
+		UpdateTimer.stop();
 	}
 	
 	@Override
@@ -80,49 +104,28 @@ public class StartActivity extends FragmentActivity {
 
 		super.onDestroy();
 
+		UpdateTimer.setTickListener(null);
+		
 		if (this.mMap != null) {
 			
 			this.mMap.setOnMarkerClickListener(null);
 			this.mMap.setOnMapClickListener(null);
 		}
-	}
-	
-	private OnMarkerClickListener mMarkerClick = new OnMarkerClickListener() {
 		
-		@Override
-		public boolean onMarkerClick(Marker marker) {
-			
-			StartActivity.this.expandMenu();
-			return false;
-		}
-	};
-	
-	private OnMapClickListener mMapClick = new OnMapClickListener() {
-
-		@Override
-		public void onMapClick(LatLng point) {
-
-			StartActivity.this.collapseMenu();
-		}
-	};
-	
-	private void collapseMenu() {
-
-		if (this.mMenu == null)
-			this.mMenu = (LinearLayout)this.findViewById(R.id.menu_bar);
-
-		final MenuAnimation animation = new MenuAnimation(this.mMenu, 1);
-		this.mMenu.startAnimation(animation);
-		this.mMenu.setVisibility(View.VISIBLE);
+		if (this.mMessage != null)
+			this.mMessage.setOnClickListener(null);
+		
+		if (this.mLike != null)
+			this.mLike.setOnClickListener(null);
 	}
 	
-	private void expandMenu() {
+	private void loadEvents() {
+	
+		this.mMessage = (ImageButton)this.findViewById(R.id.menu_message);
+		this.mMessage.setOnClickListener(this.mMessageClick);
 
-		if (this.mMenu == null)
-			this.mMenu = (LinearLayout)this.findViewById(R.id.menu_bar);
-
-		final MenuAnimation animation = new MenuAnimation(this.mMenu, 0);
-		this.mMenu.startAnimation(animation);
+		this.mLike = (ImageButton)this.findViewById(R.id.menu_like);
+		this.mLike.setOnClickListener(this.mLikeClick);
 	}
 	
 	private void loadUser() {
@@ -133,7 +136,7 @@ public class StartActivity extends FragmentActivity {
 			this.mUserId = storage.getUser().getId();
 	}
 	
-	private void loadPoints() {
+	private void loadPoints(final boolean reload) {
 	
 		final URI address = new AddressBuilder(this).locations();
 		final Get get = new Get();
@@ -142,24 +145,31 @@ public class StartActivity extends FragmentActivity {
 			@Override
 			public void success(final String content) {
 
-				StartActivity.this.parseContent(content);
-				
-				StartActivity.this.runOnUiThread(new Runnable() {
+				if (reload) {
 					
-					@Override
-					public void run() {
-
-						StartActivity.this.zoomToUser();
-						StartActivity.this.addPoints();
-						StartActivity.this.addMyLocation();
-					}
-				});
+					// TODO:
+				}
+				else {
+				
+					StartActivity.this.mSongs = new LocationParser(StartActivity.this).parse(content);
+					
+					StartActivity.this.runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+	
+							StartActivity.this.addMyLocation();
+							StartActivity.this.addPoints();
+							StartActivity.this.zoomToUser();
+						}
+					});
+				}
 			}
 			
 			@Override
 			public void failed(final String message) { 
 				
-				StartActivity.this.showError(message);
+				StartActivity.this.showMessage(message);
 			}
 		});
 		
@@ -169,9 +179,9 @@ public class StartActivity extends FragmentActivity {
 	
 	private void zoomToUser() {
 
-		final Marker userMarker = this.addMarker(this.mSongs.get(0));
+		final LatLng location = LocationHelper.getLoction(this);
 		
-		this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userMarker.getPosition(), 8));
+		this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 8));
 		this.mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
 	}
 	
@@ -182,10 +192,10 @@ public class StartActivity extends FragmentActivity {
 		if (count == 0)
 			return;
 		
-		for (int i = 0; i < count; i++)
-			this.addMarker(this.mSongs.get(i));
+		for (SongLocation key : this.mSongs.keySet())
+			this.addMarker(key);
 	}
-	
+
 	private void addMyLocation() {
 	
 		final LatLng location = LocationHelper.getLoction(this);
@@ -196,63 +206,109 @@ public class StartActivity extends FragmentActivity {
 		this.mMap.addMarker(markerOptions);
 	}
 	
-	private Marker addMarker(final SongLocation nearestUser) {
+	private Marker addMarker(final SongLocation location) {
 
 		final MarkerOptions markerOptions = new MarkerOptions()
-			.position(nearestUser.getPosition())
-			.title(nearestUser.toString())
-			.snippet(nearestUser.getDate()); // TODO: calculate distance
+			.position(location.getPosition())
+			.title(location.toString())
+			.snippet(location.getDate()); // TODO: calculate distance
 		final Marker marker = this.mMap.addMarker(markerOptions);
+		
+		// associate marker to location
+		this.mSongs.put(location, marker);
 		
 		return marker;
 	}
-	
-	private void parseContent(final String content) {
-		
-		try {
-			
-			final JSONArray array = new JSONArray(content);
-			final int count = array.length();
-			
-			this.mSongs = new ArrayList<SongLocation>();
-			
-			JSONObject jo;
-			SongLocation user;
-			
-			for (int i = 0; i < count; i++) {
-			
-				jo = array.getJSONObject(i);
-				
-				user = new SongLocation();
-				user.fromJsonObject(jo, this);
-				
-				// skip my track
-				if (this.mUserId == user.getIdUser())
-					continue;
-				
-				this.mSongs.add(user);
-			}
-		} 
-		catch (JSONException e) {
-			
-			e.printStackTrace();
-		}
-	}
 
-	private void showError(final String message) {
+	private void showMessage(final int messageId) {
+	
+		this.showMessage(this.getString(messageId));
+	}
+	
+	private void showMessage(final String message) {
 	
 		this.runOnUiThread(new Runnable() {
 			
 			@Override
 			public void run() {
 
-				Toast.makeText(StartActivity.this, message, Toast.LENGTH_LONG).show();
+				Toast.makeText(StartActivity.this, message, Toast.LENGTH_SHORT).show();
 			}
 		});
 	}
 	
-	private void newSong() {
-	
-		// do nothing?
+	private void loadMenuAnimation() {
+
+		this.mMenuAnimation = new MenuAnimation(this, 
+				(LinearLayout)this.findViewById(R.id.menu_bar));
+		
+		this.mMenuAnimation.collapse(true);
 	}
+	
+	private TickListener mTick = new TickListener() {
+		
+		@Override
+		public void onTick() {
+
+			StartActivity.this.loadPoints(true);
+		}
+	};
+
+	private OnClickListener mMessageClick = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			
+			// TODO:
+		}
+	};
+
+	private OnClickListener mLikeClick = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+
+			final StartActivity parent = StartActivity.this;
+			
+			if (parent.mActiveMarker == null)
+				return;
+			
+			final Marker marker = parent.mActiveMarker;
+			final SongLocation location = (SongLocation)com.wavvy.logic.Utils
+					.getKeyFromValue(parent.mSongs, marker);
+			
+			if (location != null) {
+				
+				new LikeManager(parent).Like(location.getIdUser(), new ActionListener() {
+					
+					@Override
+					public void onSuccess() { parent.showMessage(R.string.like_success); }
+					
+					@Override
+					public void onError() { parent.showMessage(R.string.like_error); }
+				});
+			}
+		}
+	};
+	
+	private OnMarkerClickListener mMarkerClick = new OnMarkerClickListener() {
+		
+		@Override
+		public boolean onMarkerClick(Marker marker) {
+
+			StartActivity.this.mMenuAnimation.expand();
+			StartActivity.this.mActiveMarker = marker;
+			return false;
+		}
+	};
+	
+	private OnMapClickListener mMapClick = new OnMapClickListener() {
+
+		@Override
+		public void onMapClick(LatLng point) {
+
+			StartActivity.this.mMenuAnimation.collapse();
+			StartActivity.this.mActiveMarker = null;
+		}
+	};
 }

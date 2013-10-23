@@ -16,6 +16,70 @@ public class AddressBuilder extends BaseContext {
 		super(context);
 	}
 
+	public URI locations() {
+
+		final StringBuilder builder = new StringBuilder();
+		builder.append(this.getString(R.string.address_base));
+		builder.append(this.getString(R.string.address_locations));
+
+		try {
+			
+			return new URI(builder.toString());
+		} 
+		catch (URISyntaxException e) {
+			
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public URI add() {
+
+		try {
+			
+			return new URI(this.getString(R.string.address_base));
+		} 
+		catch (URISyntaxException e) {
+			
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public URI like(int targetUserId) {
+
+		final StringBuilder builder = new StringBuilder();
+		builder.append(this.getString(R.string.address_base));
+		builder.append(this.getString(R.string.address_like, targetUserId));
+
+		try {
+			
+			return new URI(builder.toString());
+		} 
+		catch (URISyntaxException e) {
+			
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public URI likes(int userId) {
+
+		final StringBuilder builder = new StringBuilder();
+		builder.append(this.getString(R.string.address_base));
+		builder.append(this.getString(R.string.address_likes, userId));
+
+		try {
+			
+			return new URI(builder.toString());
+		} 
+		catch (URISyntaxException e) {
+			
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	@Deprecated
 	public URI registerNick(String nick) {
 
@@ -69,36 +133,5 @@ public class AddressBuilder extends BaseContext {
 			e.printStackTrace();
 			return null;
 		}
-	}
-
-	public URI locations() {
-
-		final StringBuilder builder = new StringBuilder();
-		builder.append(this.getString(R.string.address_base));
-		builder.append(this.getString(R.string.address_locations));
-
-		try {
-			
-			return new URI(builder.toString());
-		} 
-		catch (URISyntaxException e) {
-			
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	public URI add() {
-
-		try {
-			
-			return new URI(this.getString(R.string.address_base));
-		} 
-		catch (URISyntaxException e) {
-			
-			e.printStackTrace();
-			return null;
-		}
-		
 	}
 }
