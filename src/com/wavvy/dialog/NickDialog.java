@@ -61,6 +61,7 @@ public class NickDialog extends BaseDialog {
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void checkNick() {
 
 		final String nick = this.getEncodedNick();

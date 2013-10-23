@@ -11,4 +11,29 @@
         android:layout_height="match_parent"
         class="com.google.android.gms.maps.SupportMapFragment" />
 
+    <LinearLayout 
+        android:id="@+id/menu_bar"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_width="fill_parent"
+        android:layout_height="50dip"
+        android:orientation="horizontal"
+        android:background="#fff"
+        android:paddingTop="6dip">
+        <ImageButton 
+            android:id="@+id/menu_message"
+            android:src="@drawable/icon_message"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" 
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/icon_message" />
+        <ImageButton 
+            android:id="@+id/menu_like"
+            android:src="@drawable/icon_like"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" 
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/icon_like" />
+    </LinearLayout>
+    
 </RelativeLayout> 

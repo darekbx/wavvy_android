@@ -10,11 +10,14 @@ import org.json.JSONObject;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.wavvy.animations.MenuAnimation;
 import com.wavvy.listeners.GetListener;
 import com.wavvy.logic.LocationHelper;
 import com.wavvy.logic.http.AddressBuilder;
@@ -29,6 +32,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class StartActivity extends FragmentActivity {
@@ -44,6 +49,7 @@ public class StartActivity extends FragmentActivity {
 
 	private GoogleMap mMap;
 	private List<SongLocation> mSongs;
+	private LinearLayout mMenu;
 	private int mUserId = -1;
 	
 	@Override
@@ -56,14 +62,67 @@ public class StartActivity extends FragmentActivity {
 		final Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.map);
 		this.mMap = ((SupportMapFragment)fragment).getMap();
 		this.mMap.setMyLocationEnabled(true);
+		this.mMap.setOnMarkerClickListener(this.mMarkerClick);
+		this.mMap.setOnMapClickListener(this.mMapClick);
 		
 		if (!Utils.isOnline(this))
 			Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_LONG).show();
 		else {
 			
+			this.collapseMenu();
 			this.loadUser();
 			this.loadPoints();
 		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+
+		super.onDestroy();
+
+		if (this.mMap != null) {
+			
+			this.mMap.setOnMarkerClickListener(null);
+			this.mMap.setOnMapClickListener(null);
+		}
+	}
+	
+	private OnMarkerClickListener mMarkerClick = new OnMarkerClickListener() {
+		
+		@Override
+		public boolean onMarkerClick(Marker marker) {
+			
+			StartActivity.this.expandMenu();
+			return false;
+		}
+	};
+	
+	private OnMapClickListener mMapClick = new OnMapClickListener() {
+
+		@Override
+		public void onMapClick(LatLng point) {
+
+			StartActivity.this.collapseMenu();
+		}
+	};
+	
+	private void collapseMenu() {
+
+		if (this.mMenu == null)
+			this.mMenu = (LinearLayout)this.findViewById(R.id.menu_bar);
+
+		final MenuAnimation animation = new MenuAnimation(this.mMenu, 1);
+		this.mMenu.startAnimation(animation);
+		this.mMenu.setVisibility(View.VISIBLE);
+	}
+	
+	private void expandMenu() {
+
+		if (this.mMenu == null)
+			this.mMenu = (LinearLayout)this.findViewById(R.id.menu_bar);
+
+		final MenuAnimation animation = new MenuAnimation(this.mMenu, 0);
+		this.mMenu.startAnimation(animation);
 	}
 	
 	private void loadUser() {

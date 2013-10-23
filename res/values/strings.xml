@@ -10,6 +10,8 @@
     <string name="menu_my_locations">My locations</string>
     <string name="menu_reset">Reset</string>
     <string name="dot_format">%s.</string>
+    <string name="icon_like">Like</string>
+    <string name="icon_message">Message</string>
     
     <string name="address_base">http://darekdev.cba.pl/</string>
     <string name="address_locations">"?action=locations"</string>
