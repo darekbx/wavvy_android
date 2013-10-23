@@ -8,7 +8,7 @@ import com.wavvy.listeners.TickListener;
 public class UpdateTimer {
 
 	private static Timer sTimer = null;
-	private static final int INTERVAL = 1000; // 30s
+	private static final int INTERVAL = 10000; // 30s
 	private static TickListener sListener;
 	
 	public static void start() {
@@ -19,7 +19,6 @@ public class UpdateTimer {
 					@Override
 					public void run() {
 
-						UpdateTimer.checkLikes();
 						UpdateTimer.tick();
 					}
 				}, INTERVAL, INTERVAL);
@@ -34,11 +33,6 @@ public class UpdateTimer {
 	public static void setTickListener(TickListener listener) {
 	
 		UpdateTimer.sListener = listener;
-	}
-	
-	private static void checkLikes() {
-		
-		// TODO:
 	}
 	
 	private static void tick() {

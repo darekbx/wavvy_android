@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="280dip"
+    android:layout_height="wrap_content"
+    android:padding="0dip"
+    android:layout_margin="4dip"
+    android:background="@drawable/add_border"
+    android:orientation="vertical">
+
+    <TextView 
+        android:layout_width="fill_parent" 
+        android:layout_height="40dip" 
+        android:text="@string/like_new"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:background="@drawable/add_title" />
+    
+    <LinearLayout 
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/add_bottom"
+        android:padding="12dip">
+
+        <Button
+            android:id="@+id/like_dialog_ok"
+            android:layout_width="fill_parent"
+            android:layout_height="40dip"
+            style="@style/custom_button"
+            android:background="@drawable/ok_button_selector" />
+        
+    </LinearLayout>
+   
+</LinearLayout>

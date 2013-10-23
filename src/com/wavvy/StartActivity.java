@@ -13,8 +13,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.wavvy.animations.MenuAnimation;
+import com.wavvy.dialog.LikeDialog;
 import com.wavvy.listeners.ActionListener;
 import com.wavvy.listeners.GetListener;
+import com.wavvy.listeners.LikesListener;
 import com.wavvy.listeners.TickListener;
 import com.wavvy.logic.LikeManager;
 import com.wavvy.logic.LocationHelper;
@@ -23,6 +25,7 @@ import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Get;
 import com.wavvy.logic.http.Utils;
 import com.wavvy.logic.parsers.LocationParser;
+import com.wavvy.logic.storage.LikeStorage;
 import com.wavvy.logic.storage.UserStorage;
 import com.wavvy.model.SongLocation;
 
@@ -80,6 +83,8 @@ public class StartActivity extends FragmentActivity {
 			this.loadEvents();
 			this.loadUser();
 			this.loadPoints(false);
+			
+			this.checkLikes();
 		}
 	}
 	
@@ -245,12 +250,47 @@ public class StartActivity extends FragmentActivity {
 		this.mMenuAnimation.collapse(true);
 	}
 	
+	private void checkLikes() {
+	
+		if (this.mUserId == -1)
+			return;
+		
+		final LikeStorage storage = new LikeStorage(this);
+		final int myLikes = storage.getLikesCount();
+
+		new LikeManager(this).likes(this.mUserId, new LikesListener() {
+			
+			@Override
+			public void onSuccess(int likes) {
+
+				if (likes <= myLikes)
+					return; // no new likes
+				
+				// received like!
+				storage.setLikesCount(likes);
+				
+				StartActivity.this.runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						
+						new LikeDialog(StartActivity.this).show();
+					}
+				});
+			}
+			
+			@Override
+			public void onError() { }
+		});
+	}
+	
 	private TickListener mTick = new TickListener() {
 		
 		@Override
 		public void onTick() {
 
 			StartActivity.this.loadPoints(true);
+			StartActivity.this.checkLikes();
 		}
 	};
 
@@ -279,7 +319,7 @@ public class StartActivity extends FragmentActivity {
 			
 			if (location != null) {
 				
-				new LikeManager(parent).Like(location.getIdUser(), new ActionListener() {
+				new LikeManager(parent).like(location.getIdUser(), new ActionListener() {
 					
 					@Override
 					public void onSuccess() { parent.showMessage(R.string.like_success); }

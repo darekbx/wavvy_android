@@ -28,9 +28,12 @@
     <string name="nick_count">count</string>
     <string name="nick_id">id</string>
     
+    <string name="like_new">Someone likes your song!</string>
     <string name="like_success">You like it!</string>
     <string name="like_error">Like failed&#8230;</string>
-    
+    <string name="like_count">count</string>
+    <string name="like_count_key">like_count_key</string>
+        
     <string name="user_nick_key">nick_key</string>
     <string name="user_id_key">id_key</string>
     
