@@ -1,4 +1,4 @@
-package com.wavvy.logic;
+package com.wavvy.logic.managers;
 
 import java.net.URI;
 
@@ -11,6 +11,7 @@ import com.wavvy.R;
 import com.wavvy.listeners.ActionListener;
 import com.wavvy.listeners.GetListener;
 import com.wavvy.listeners.LikesListener;
+import com.wavvy.logic.BaseContext;
 import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Get;
 

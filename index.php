@@ -125,13 +125,7 @@ class Api {
         if ($id_user === -1) {
         
           // create new user
-          $time = time();
-          $stmt = $this->connection->prepare("INSERT INTO `user` VALUES(null, ?, NOW())");
-          $stmt->bind_param('s', $time); // nick is unix timestamp
-          $stmt->execute();
-          $stmt->close();
-          
-          $id_user = $this->connection->insert_id;
+          $id_user = $this->createUser();
           $is_new = true;
         }
         
@@ -234,9 +228,18 @@ class Api {
     
       try {
       
-        $from_id_user = $get['from_id_user'];
-        $target_id_user = $get['target_id_user'];
+        $is_new = false;
+        
+        $from_id_user = intval($get['from_id_user']);
+        $target_id_user = intval($get['target_id_user']);
         $message = base64_decode($get['message']);
+        
+        if ($from_id_user === -1) {
+        
+          // create new user
+          $from_id_user = $this->createUser();
+          $is_new = true;
+        }
         
         $stmt = $this->connection->prepare("INSERT INTO `message` VALUES(null, ?, ?, ?, NOW())");
         $stmt->bind_param('iis', 
@@ -247,7 +250,8 @@ class Api {
         $stmt->execute();
         $stmt->close();
         
-        $this->printSuccess("sent");
+        if ($is_new === true) $this->printAdded("added", $from_id_user);
+        else $this->printSuccess("sent");
       } 
       catch (Exception $e) {
       
@@ -276,6 +280,17 @@ class Api {
         $this->printError($e->getMessage());
       }
     }
+  }
+  
+  function createUser() {
+
+    $time = time();
+    $stmt = $this->connection->prepare("INSERT INTO `user` VALUES(null, ?, NOW())");
+    $stmt->bind_param('s', $time); // nick is unix timestamp
+    $stmt->execute();
+    $stmt->close();
+    
+    return $this->connection->insert_id;
   }
   
   function printAll() {

@@ -1,7 +1,9 @@
 package com.wavvy.logic.http;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 import android.content.Context;
 
@@ -68,6 +70,52 @@ public class AddressBuilder extends BaseContext {
 		final StringBuilder builder = new StringBuilder();
 		builder.append(this.getString(R.string.address_base));
 		builder.append(this.getString(R.string.address_likes, userId));
+
+		try {
+			
+			return new URI(builder.toString());
+		} 
+		catch (URISyntaxException e) {
+			
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public URI message(int fromIdUser, int targetIdUser, String message64) {
+
+		final StringBuilder builder = new StringBuilder();
+		
+		builder.append(this.getString(R.string.address_base));
+		
+		try {
+			
+			builder.append(this.getString(R.string.address_message, 
+					fromIdUser, 
+					targetIdUser, 
+					URLEncoder.encode(message64, "UTF-8")));
+		} 
+		catch (UnsupportedEncodingException e1) {
+
+			e1.printStackTrace();
+		}
+
+		try {
+			
+			return new URI(builder.toString());
+		} 
+		catch (URISyntaxException e) {
+			
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public URI messages(int userId) {
+
+		final StringBuilder builder = new StringBuilder();
+		builder.append(this.getString(R.string.address_base));
+		builder.append(this.getString(R.string.address_messages, userId));
 
 		try {
 			

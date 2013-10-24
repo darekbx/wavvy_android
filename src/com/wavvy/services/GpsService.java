@@ -1,29 +1,24 @@
 package com.wavvy.services;
 
-import com.wavvy.StartActivity.LocationReceiver;
-
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 
 public class GpsService extends Service {
 
 	private LocationManager mLocationManager;
-	private PendingIntent mIntent;
 	private final IBinder mBinder = new LocalBinder();
 	
-    private static final long TIME_UPDATE = 0;
-    private static final float DISTANCE_UPDATE = 0;
+    private static final long TIME_UPDATE = 3000; // 30s
+    private static final float DISTANCE_UPDATE = 10; // 10m
     
 	private void startGpsUpdates() {
-
-		final Intent intent = new Intent(this, LocationReceiver.class);
-		this.mIntent = PendingIntent.getBroadcast(getApplicationContext(), 
-				0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		this.mLocationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -36,13 +31,28 @@ public class GpsService extends Service {
 				provider, 
 				TIME_UPDATE,
 				DISTANCE_UPDATE,
-				this.mIntent);
+				this.mListener);
 	}
+	
+	private LocationListener mListener = new LocationListener() {
+
+		@Override
+		public void onLocationChanged(Location location) { }
+
+		@Override
+		public void onProviderDisabled(String provider) { }
+
+		@Override
+		public void onProviderEnabled(String provider) { }
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) { }
+	};
 	
 	private void stopGpsUpdates() {
 	
 		if (this.mLocationManager != null)
-			this.mLocationManager.removeUpdates(this.mIntent);
+			this.mLocationManager.removeUpdates(this.mListener);
 	}
 	
 	@Override

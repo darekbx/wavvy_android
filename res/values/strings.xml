@@ -18,6 +18,9 @@
     <string name="address_locations">"?action=locations"</string>
     <string name="address_like">"?action=like&amp;target_id_user=%s"</string>
     <string name="address_likes">"?action=like&amp;id_user=%s"</string>
+    <string name="address_message" formatted="false">"?action=message&amp;from_id_user=%s&amp;target_id_user=%s&amp;message=%s"</string>
+    <string name="address_messages">"?action=message&amp;id_user=%s"</string>
+    
     <string name="address_registernick">"?action=registernick&amp;nick=%s"</string>
     <string name="address_userlocations">"?action=userlocations&amp;id_user=%s"</string>
     <string name="address_nearest" formatted="false">"?action=nearest&amp;latitude=%s&amp;longitude=%s&amp;id_user=%s"</string>
@@ -34,6 +37,10 @@
     <string name="like_error">Like failed&#8230;</string>
     <string name="like_count">count</string>
     <string name="like_count_key">like_count_key</string>
+    
+    <string name="message_from_id_user">from_id_user</string>
+    <string name="message_message">message</string>
+    <string name="message_date">date</string>
     
     <string name="user_nick_key">nick_key</string>
     <string name="user_id_key">id_key</string>

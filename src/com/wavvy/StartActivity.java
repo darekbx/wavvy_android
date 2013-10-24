@@ -18,19 +18,18 @@ import com.wavvy.listeners.ActionListener;
 import com.wavvy.listeners.GetListener;
 import com.wavvy.listeners.LikesListener;
 import com.wavvy.listeners.TickListener;
-import com.wavvy.logic.LikeManager;
 import com.wavvy.logic.LocationHelper;
 import com.wavvy.logic.UpdateTimer;
 import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Get;
 import com.wavvy.logic.http.Utils;
+import com.wavvy.logic.managers.LikeManager;
 import com.wavvy.logic.parsers.LocationParser;
 import com.wavvy.logic.storage.LikeStorage;
 import com.wavvy.logic.storage.UserStorage;
 import com.wavvy.model.SongLocation;
 import com.wavvy.services.GpsService;
 
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -56,27 +55,6 @@ public class StartActivity extends FragmentActivity {
 	    }
 	}
 
-	public class LocationReceiver extends BroadcastReceiver {
-		 
-	    @Override
-	    public void onReceive(Context context, Intent intent) {
-
-	    	final Bundle bundle = intent.getExtras();
-	    	final Location location = (Location)bundle
-	    			.get(android.location.LocationManager.KEY_LOCATION_CHANGED);
-
-	    	if (location != null)
-	    		LocationHelper.LastLocation = location;
-
-    		// TODO:
-	    	String m = "New location: ";
-	    	if (location != null) m += location.getLatitude() + ", " + location.getLongitude();
-	    	Dialog d2 = new Dialog(StartActivity.this);
-	    	d2.setTitle(m);
-	    	d2.show();
-	    }
-	}
-	
 	private LinkedHashMap<SongLocation, Marker> mSongs;
 	private GoogleMap mMap;
 	private MenuAnimation mMenuAnimation;

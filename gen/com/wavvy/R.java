@@ -245,9 +245,11 @@ containing a value of this type.
         public static final int address_like=0x7f070026;
         public static final int address_likes=0x7f070027;
         public static final int address_locations=0x7f070025;
-        public static final int address_nearest=0x7f07002a;
-        public static final int address_registernick=0x7f070028;
-        public static final int address_userlocations=0x7f070029;
+        public static final int address_message=0x7f070028;
+        public static final int address_messages=0x7f070029;
+        public static final int address_nearest=0x7f07002c;
+        public static final int address_registernick=0x7f07002a;
+        public static final int address_userlocations=0x7f07002b;
         public static final int app_name=0x7f070019;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
@@ -340,46 +342,49 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f070012;
-        public static final int db_name=0x7f070041;
-        public static final int db_track_create_syntax=0x7f070043;
-        public static final int db_track_insert=0x7f070044;
-        public static final int db_track_tablename=0x7f070042;
-        public static final int db_where_id=0x7f070045;
+        public static final int db_name=0x7f070046;
+        public static final int db_track_create_syntax=0x7f070048;
+        public static final int db_track_insert=0x7f070049;
+        public static final int db_track_tablename=0x7f070047;
+        public static final int db_where_id=0x7f07004a;
         public static final int distance_format=0x7f070023;
         public static final int dot_format=0x7f070020;
-        public static final int error_gps=0x7f07003a;
-        public static final int error_no_internet=0x7f070038;
-        public static final int error_unknown=0x7f070039;
+        public static final int error_gps=0x7f07003f;
+        public static final int error_no_internet=0x7f07003d;
+        public static final int error_unknown=0x7f07003e;
         public static final int icon_like=0x7f070021;
         public static final int icon_message=0x7f070022;
-        public static final int like_count=0x7f070034;
-        public static final int like_count_key=0x7f070035;
-        public static final int like_error=0x7f070033;
-        public static final int like_new=0x7f070031;
-        public static final int like_success=0x7f070032;
-        public static final int main_nick=0x7f07003b;
+        public static final int like_count=0x7f070036;
+        public static final int like_count_key=0x7f070037;
+        public static final int like_error=0x7f070035;
+        public static final int like_new=0x7f070033;
+        public static final int like_success=0x7f070034;
+        public static final int main_nick=0x7f070040;
         public static final int menu_map=0x7f07001d;
         public static final int menu_my_locations=0x7f07001e;
         public static final int menu_reset=0x7f07001f;
         public static final int menu_songs=0x7f07001c;
-        public static final int nick_count=0x7f07002f;
-        public static final int nick_distance=0x7f07003c;
-        public static final int nick_empty=0x7f07002c;
-        public static final int nick_enter_nick=0x7f07002b;
-        public static final int nick_id=0x7f070030;
-        public static final int nick_reserved=0x7f07002e;
-        public static final int nick_too_short=0x7f07002d;
-        public static final int notification_text=0x7f070040;
-        public static final int notification_title=0x7f07003f;
-        public static final int receiver_album_key=0x7f070048;
-        public static final int receiver_artist_key=0x7f070047;
-        public static final int receiver_id_key=0x7f070046;
-        public static final int receiver_track_key=0x7f070049;
-        public static final int response_id_user=0x7f07003e;
-        public static final int response_success=0x7f07003d;
+        public static final int message_date=0x7f07003a;
+        public static final int message_from_id_user=0x7f070038;
+        public static final int message_message=0x7f070039;
+        public static final int nick_count=0x7f070031;
+        public static final int nick_distance=0x7f070041;
+        public static final int nick_empty=0x7f07002e;
+        public static final int nick_enter_nick=0x7f07002d;
+        public static final int nick_id=0x7f070032;
+        public static final int nick_reserved=0x7f070030;
+        public static final int nick_too_short=0x7f07002f;
+        public static final int notification_text=0x7f070045;
+        public static final int notification_title=0x7f070044;
+        public static final int receiver_album_key=0x7f07004d;
+        public static final int receiver_artist_key=0x7f07004c;
+        public static final int receiver_id_key=0x7f07004b;
+        public static final int receiver_track_key=0x7f07004e;
+        public static final int response_id_user=0x7f070043;
+        public static final int response_success=0x7f070042;
         public static final int service_name=0x7f07001a;
-        public static final int user_id_key=0x7f070037;
-        public static final int user_nick_key=0x7f070036;
+        public static final int user_id_key=0x7f07003c;
+        public static final int user_nick_key=0x7f07003b;
     }
     public static final class style {
         /** 
@@ -452,7 +457,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:cameraBearing
+          @attr name android:cameraBearing
         */
         public static final int MapAttrs_cameraBearing = 1;
         /**
@@ -466,7 +471,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:cameraTargetLat
+          @attr name android:cameraTargetLat
         */
         public static final int MapAttrs_cameraTargetLat = 2;
         /**
@@ -480,7 +485,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:cameraTargetLng
+          @attr name android:cameraTargetLng
         */
         public static final int MapAttrs_cameraTargetLng = 3;
         /**
@@ -494,7 +499,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:cameraTilt
+          @attr name android:cameraTilt
         */
         public static final int MapAttrs_cameraTilt = 4;
         /**
@@ -508,7 +513,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:cameraZoom
+          @attr name android:cameraZoom
         */
         public static final int MapAttrs_cameraZoom = 5;
         /**
@@ -528,7 +533,7 @@ containing a value of this type.
 <tr><td><code>terrain</code></td><td>3</td><td></td></tr>
 <tr><td><code>hybrid</code></td><td>4</td><td></td></tr>
 </table>
-          @attr name com.wavvy:mapType
+          @attr name android:mapType
         */
         public static final int MapAttrs_mapType = 0;
         /**
@@ -542,7 +547,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:uiCompass
+          @attr name android:uiCompass
         */
         public static final int MapAttrs_uiCompass = 6;
         /**
@@ -556,7 +561,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:uiRotateGestures
+          @attr name android:uiRotateGestures
         */
         public static final int MapAttrs_uiRotateGestures = 7;
         /**
@@ -570,7 +575,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:uiScrollGestures
+          @attr name android:uiScrollGestures
         */
         public static final int MapAttrs_uiScrollGestures = 8;
         /**
@@ -584,7 +589,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:uiTiltGestures
+          @attr name android:uiTiltGestures
         */
         public static final int MapAttrs_uiTiltGestures = 9;
         /**
@@ -598,7 +603,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:uiZoomControls
+          @attr name android:uiZoomControls
         */
         public static final int MapAttrs_uiZoomControls = 10;
         /**
@@ -612,7 +617,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:uiZoomGestures
+          @attr name android:uiZoomGestures
         */
         public static final int MapAttrs_uiZoomGestures = 11;
         /**
@@ -626,7 +631,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:useViewLifecycle
+          @attr name android:useViewLifecycle
         */
         public static final int MapAttrs_useViewLifecycle = 12;
         /**
@@ -640,7 +645,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.wavvy:zOrderOnTop
+          @attr name android:zOrderOnTop
         */
         public static final int MapAttrs_zOrderOnTop = 13;
     };
