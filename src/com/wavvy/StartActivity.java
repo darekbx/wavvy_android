@@ -28,10 +28,13 @@ import com.wavvy.logic.parsers.LocationParser;
 import com.wavvy.logic.storage.LikeStorage;
 import com.wavvy.logic.storage.UserStorage;
 import com.wavvy.model.SongLocation;
+import com.wavvy.services.GpsService;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -48,10 +51,32 @@ public class StartActivity extends FragmentActivity {
 	    @Override
 	    public void onReceive(Context context, Intent intent) {
 
+	    	/* received new song */
 	    	/* do nothing */
 	    }
 	}
 
+	public class LocationReceiver extends BroadcastReceiver {
+		 
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+
+	    	final Bundle bundle = intent.getExtras();
+	    	final Location location = (Location)bundle
+	    			.get(android.location.LocationManager.KEY_LOCATION_CHANGED);
+
+	    	if (location != null)
+	    		LocationHelper.LastLocation = location;
+
+    		// TODO:
+	    	String m = "New location: ";
+	    	if (location != null) m += location.getLatitude() + ", " + location.getLongitude();
+	    	Dialog d2 = new Dialog(StartActivity.this);
+	    	d2.setTitle(m);
+	    	d2.show();
+	    }
+	}
+	
 	private LinkedHashMap<SongLocation, Marker> mSongs;
 	private GoogleMap mMap;
 	private MenuAnimation mMenuAnimation;
@@ -66,7 +91,8 @@ public class StartActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 
 		this.setContentView(R.layout.activity_start);
-
+		this.startService(new Intent(this, GpsService.class));
+		
 		final Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.map);
 		this.mMap = ((SupportMapFragment)fragment).getMap();
 		this.mMap.setMyLocationEnabled(true);
@@ -184,7 +210,7 @@ public class StartActivity extends FragmentActivity {
 	
 	private void zoomToUser() {
 
-		final LatLng location = LocationHelper.getLoction(this);
+		final LatLng location = LocationHelper.getLocation(this);
 		
 		this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 8));
 		this.mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
@@ -203,7 +229,7 @@ public class StartActivity extends FragmentActivity {
 
 	private void addMyLocation() {
 	
-		final LatLng location = LocationHelper.getLoction(this);
+		final LatLng location = LocationHelper.getLocation(this);
 
 		final MarkerOptions markerOptions = new MarkerOptions()
 			.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_flag))
@@ -216,13 +242,30 @@ public class StartActivity extends FragmentActivity {
 		final MarkerOptions markerOptions = new MarkerOptions()
 			.position(location.getPosition())
 			.title(location.toString())
-			.snippet(location.getDate()); // TODO: calculate distance
+			.snippet(this.getDistance(location));
 		final Marker marker = this.mMap.addMarker(markerOptions);
 		
 		// associate marker to location
 		this.mSongs.put(location, marker);
 		
 		return marker;
+	}
+	
+	private String getDistance(SongLocation target) {
+
+		final Location myLocation = LocationHelper.getFullLocation(this);
+		
+		if (myLocation == null)
+			return new String();
+		
+		final LatLng position = target.getPosition();
+		final Location location = new Location(new String());
+		location.setLatitude(position.latitude);
+		location.setLongitude(position.longitude);
+
+		final float distance = myLocation.distanceTo(location);
+		
+		return this.getString(R.string.distance_format, distance);
 	}
 
 	private void showMessage(final int messageId) {
@@ -336,6 +379,9 @@ public class StartActivity extends FragmentActivity {
 		@Override
 		public boolean onMarkerClick(Marker marker) {
 
+			if (marker.getTitle() == null)
+				return false;
+			
 			StartActivity.this.mMenuAnimation.expand();
 			StartActivity.this.mActiveMarker = marker;
 			return false;

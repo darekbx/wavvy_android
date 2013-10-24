@@ -20,11 +20,12 @@ if (!empty($_GET)) {
     
       case 'locations': $api->locations(); break;
       case 'like': $api->like($_GET); break;
+      case 'message': $api->message($_GET); break;
       
-      // --------------------------------------- UNSAFE
+      // --------------------------------------- TO REMOVE
       case 'all': $api->printAll(); break;
       case 'drop': $api->drop(); break;
-      // --------------------------------------- UNSAFE
+      // --------------------------------------- TO REMOVE
     }
 }
 
@@ -86,6 +87,15 @@ class Api {
         ." `id_user` INT NULL, "
         ." `created` DATETIME NULL, "
         ." PRIMARY KEY(`id`));";
+    $this->connection->query($sql);
+    
+    $sql = "CREATE TABLE IF NOT EXISTS `message` "
+        ."(`id` INT NOT NULL AUTO_INCREMENT, "
+        ." `from_id_user` INT NULL, "
+        ." `target_id_user` INT NULL, "
+        ." `message` TEXT NULL, "
+        ." `created` DATETIME NULL, "
+        ." PRIMARY KEY(`id`)) CHARACTER SET utf8 COLLATE utf8_general_ci;";
     $this->connection->query($sql);
   }
 
@@ -216,6 +226,58 @@ class Api {
     }
   }
 
+  function message($get) {
+  
+    if (!empty($get['from_id_user']) 
+        && !empty($get['target_id_user']) 
+        && !empty($get['message'])) {
+    
+      try {
+      
+        $from_id_user = $get['from_id_user'];
+        $target_id_user = $get['target_id_user'];
+        $message = base64_decode($get['message']);
+        
+        $stmt = $this->connection->prepare("INSERT INTO `message` VALUES(null, ?, ?, ?, NOW())");
+        $stmt->bind_param('iis', 
+          $from_id_user, 
+          $target_id_user, 
+          $message);
+        
+        $stmt->execute();
+        $stmt->close();
+        
+        $this->printSuccess("sent");
+      } 
+      catch (Exception $e) {
+      
+        $this->printError($e->getMessage());
+      }
+    }
+    else if (!empty($get['id_user'])) {
+    
+      try {
+
+        $stmt = $this->connection->prepare("SELECT `from_id_user`, `message`, UNIX_TIMESTAMP(`created`) AS 'date' FROM `message`");
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        $rows = array();
+        
+        while ($row = $result->fetch_assoc())
+          $rows[] = $row;
+        
+        $stmt->close();
+        
+        echo json_encode($rows);
+      } 
+      catch (Exception $e) {
+      
+        $this->printError($e->getMessage());
+      }
+    }
+  }
+  
   function printAll() {
 
     //
@@ -244,6 +306,16 @@ class Api {
     $data = $this->connection->query("SELECT * FROM `like`");
     while ($row = $data->fetch_assoc()) echo json_encode($row) . "<br />";
     $data->close();
+    
+    for ($i = 0; $i < 50; $i++) echo "-";
+    echo "<br />";
+    
+    //
+    // message
+    //
+    $data = $this->connection->query("SELECT * FROM `message`");
+    while ($row = $data->fetch_assoc()) echo json_encode($row) . "<br />";
+    $data->close();
   }
   
   function drop() {
@@ -251,6 +323,7 @@ class Api {
     $this->connection()->query("DROP TABLE IF EXISTS `user`");
     $this->connection()->query("DROP TABLE IF EXISTS `song`");
     $this->connection()->query("DROP TABLE IF EXISTS `like`");
+    $this->connection()->query("DROP TABLE IF EXISTS `message`");
     
     echo "dropped";
   }

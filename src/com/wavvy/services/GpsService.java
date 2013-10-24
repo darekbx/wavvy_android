@@ -1,59 +1,55 @@
 package com.wavvy.services;
 
+import com.wavvy.StartActivity.LocationReceiver;
+
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
 
 public class GpsService extends Service {
 
 	private LocationManager mLocationManager;
+	private PendingIntent mIntent;
 	private final IBinder mBinder = new LocalBinder();
 	
-    private static final long TIME_UPDATE = 30000; // 30s
-    private static final long DISTANCE_UPDATE = 10; // 10m
+    private static final long TIME_UPDATE = 0;
+    private static final float DISTANCE_UPDATE = 0;
     
 	private void startGpsUpdates() {
-		
+
+		final Intent intent = new Intent(this, LocationReceiver.class);
+		this.mIntent = PendingIntent.getBroadcast(getApplicationContext(), 
+				0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
 		this.mLocationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+
+		String provider = LocationManager.NETWORK_PROVIDER;
+		
+		if (this.mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+			provider = LocationManager.GPS_PROVIDER;
+
 		this.mLocationManager.requestLocationUpdates(
-				LocationManager.GPS_PROVIDER, 
-				TIME_UPDATE, 
+				provider, 
+				TIME_UPDATE,
 				DISTANCE_UPDATE,
-				this.mLocationListener);
+				this.mIntent);
 	}
 	
 	private void stopGpsUpdates() {
 	
 		if (this.mLocationManager != null)
-			this.mLocationManager.removeUpdates(this.mLocationListener);
+			this.mLocationManager.removeUpdates(this.mIntent);
 	}
-	
-	private LocationListener mLocationListener = new LocationListener() {
-
-		@Override
-		public void onLocationChanged(Location location) { }
-
-		@Override
-		public void onProviderDisabled(String provider) { }
-
-		@Override
-		public void onProviderEnabled(String provider) { }
-
-		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras) { }
-	};
 	
 	@Override
 	public void onCreate() {
 
 		super.onCreate();
-		
+
 		this.startGpsUpdates();
 	}
 	
@@ -75,7 +71,7 @@ public class GpsService extends Service {
 		
 		GpsService getService() {
         	
-                return GpsService.this;
+			return GpsService.this;
         }
 	}
 }

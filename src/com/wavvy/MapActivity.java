@@ -73,7 +73,7 @@ public class MapActivity extends FragmentActivity {
 	
 		this.mUser = new UserStorage(this).getUser();
 
-		final LatLng location = LocationHelper.getLoction(this);
+		final LatLng location = LocationHelper.getLocation(this);
 		
 		final URI address = new AddressBuilder(this).nearest(location, this.mUser.getId());
 		final Get get = new Get();
@@ -131,7 +131,7 @@ public class MapActivity extends FragmentActivity {
 	
 	private void addMyLocation() {
 	
-		final LatLng location = LocationHelper.getLoction(this);
+		final LatLng location = LocationHelper.getLocation(this);
 
 		final MarkerOptions markerOptions = new MarkerOptions()
 			.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_flag))

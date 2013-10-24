@@ -41,7 +41,7 @@ public class Track {
 		data.add(new BasicNameValuePair(fields[2], this.mTitle));
 		data.add(new BasicNameValuePair(fields[3], this.mAlbum));
 		
-		final LatLng location = LocationHelper.getLoction(context);
+		final LatLng location = LocationHelper.getLocation(context);
 
 		data.add(new BasicNameValuePair(fields[4], String.valueOf(location.latitude)));
 		data.add(new BasicNameValuePair(fields[5], String.valueOf(location.longitude)));

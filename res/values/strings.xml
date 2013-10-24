@@ -12,6 +12,7 @@
     <string name="dot_format">%s.</string>
     <string name="icon_like">Like</string>
     <string name="icon_message">Message</string>
+    <string name="distance_format">%sm</string>
     
     <string name="address_base">http://darekdev.cba.pl/</string>
     <string name="address_locations">"?action=locations"</string>
@@ -33,7 +34,7 @@
     <string name="like_error">Like failed&#8230;</string>
     <string name="like_count">count</string>
     <string name="like_count_key">like_count_key</string>
-        
+    
     <string name="user_nick_key">nick_key</string>
     <string name="user_id_key">id_key</string>
     
