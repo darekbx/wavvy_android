@@ -154,25 +154,20 @@ public class StartActivity extends FragmentActivity {
 			@Override
 			public void success(final String content) {
 
-				if (reload) {
-					
-					// TODO:
-				}
-				else {
+				StartActivity.this.mSongs = new LocationParser(StartActivity.this).parse(content);
 				
-					StartActivity.this.mSongs = new LocationParser(StartActivity.this).parse(content);
+				StartActivity.this.runOnUiThread(new Runnable() {
 					
-					StartActivity.this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+
+						StartActivity.this.addPoints();
+						StartActivity.this.addMyLocation();
 						
-						@Override
-						public void run() {
-	
-							StartActivity.this.addMyLocation();
-							StartActivity.this.addPoints();
+						if (!reload)
 							StartActivity.this.zoomToUser();
-						}
-					});
-				}
+					}
+				});
 			}
 			
 			@Override
@@ -195,6 +190,8 @@ public class StartActivity extends FragmentActivity {
 	}
 	
 	private void addPoints() {
+		
+		this.mMap.clear();
 		
 		final int count = this.mSongs.size();
 		
@@ -243,7 +240,8 @@ public class StartActivity extends FragmentActivity {
 
 		final float distance = myLocation.distanceTo(location);
 		
-		return this.getString(R.string.distance_format, distance);
+		if (distance < 1000) return this.getString(R.string.format_m, (int)distance);
+		else return this.getString(R.string.format_km, (int)(distance / 1000));
 	}
 
 	private void showMessage(final int messageId) {

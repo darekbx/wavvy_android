@@ -12,7 +12,8 @@
     <string name="dot_format">%s.</string>
     <string name="icon_like">Like</string>
     <string name="icon_message">Message</string>
-    <string name="distance_format">%sm</string>
+    <string name="format_m">%sm</string>
+    <string name="format_km">%skm</string>
     
     <string name="address_base">http://darekdev.cba.pl/</string>
     <string name="address_locations">"?action=locations"</string>
