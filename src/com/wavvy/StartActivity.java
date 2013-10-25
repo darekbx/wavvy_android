@@ -15,6 +15,7 @@ import com.wavvy.listeners.LikesListener;
 import com.wavvy.listeners.MessagesListener;
 import com.wavvy.listeners.TickListener;
 import com.wavvy.logic.MapLogic;
+import com.wavvy.logic.MessageLogic;
 import com.wavvy.logic.UpdateTimer;
 import com.wavvy.logic.http.Utils;
 import com.wavvy.logic.managers.LikeManager;
@@ -36,6 +37,7 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class StartActivity extends FragmentActivity {
@@ -52,6 +54,10 @@ public class StartActivity extends FragmentActivity {
 
 	private MapLogic mLogic;
 	private GoogleMap mMap;
+	
+	private MessageLogic mMessageLogic;
+	private ListView mMessagesList;
+	
 	private SlideAnimation mMenuAnimation;
 	private SlideAnimation mMessagesAnimation;
 	private ImageButton mMessage;
@@ -75,10 +81,13 @@ public class StartActivity extends FragmentActivity {
 		this.mMap.setOnMarkerClickListener(this.mMarkerClick);
 		this.mMap.setOnMapClickListener(this.mMapClick);
 		
+		this.mMessagesList = (ListView)this.findViewById(R.id.messages_list);
+		
 		if (!Utils.isOnline(this))
 			Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_LONG).show();
 		else {
 		
+			this.mMessageLogic = new MessageLogic(this, this.mMessagesList);
 			this.mLogic = new MapLogic(this, this.mMap);
 			
 			UpdateTimer.setTickListener(this.mTick);
@@ -92,6 +101,43 @@ public class StartActivity extends FragmentActivity {
 			this.checkLikes();
 			this.checkMessages();
 		}
+	}
+	
+	@Override
+	protected void onResume() {
+
+		super.onResume();
+		
+		UpdateTimer.start();
+	}
+	
+	@Override
+	protected void onPause() {
+		
+		super.onPause();
+		
+		UpdateTimer.stop();
+	}
+	
+	@Override
+	protected void onDestroy() {
+
+		super.onDestroy();
+
+		UpdateTimer.setTickListener(null);
+		
+		if (this.mMap != null) {
+			
+			this.mMap.setOnMarkerClickListener(null);
+			this.mMap.setOnMapClickListener(null);
+			this.mMessagesAnimation.collapse();
+		}
+		
+		if (this.mMessage != null)
+			this.mMessage.setOnClickListener(null);
+		
+		if (this.mLike != null)
+			this.mLike.setOnClickListener(null);
 	}
 	
 	@Override
@@ -195,9 +241,16 @@ public class StartActivity extends FragmentActivity {
 		new MessageManager(this).get(new MessagesListener() {
 			
 			@Override
-			public void onSuccess(List<Message> messages) {
+			public void onSuccess(final List<Message> messages) {
 
-				// TODO:				
+				StartActivity.this.runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+				
+						StartActivity.this.mMessageLogic.addTheirs(messages);		
+					}
+				});
 			}
 			
 			@Override
@@ -270,6 +323,7 @@ public class StartActivity extends FragmentActivity {
 							public void run() {
 
 								setState(true);
+								parent.mMessageLogic.add(message);
 								parent.mMessageText.setText(new String());
 								parent.loadMessages();
 							}

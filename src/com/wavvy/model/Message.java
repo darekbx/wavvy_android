@@ -1,5 +1,6 @@
 package com.wavvy.model;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.json.JSONObject;
@@ -13,8 +14,14 @@ public class Message {
 	
 	private String mMessage;
 	private String mDate;
+	private boolean mIsMine;
 	private int mFromIdUser;
 
+	public Message() {
+	
+		this.mIsMine = false;
+	}
+	
 	public void fromJsonObject(JSONObject jo, Context context) {
 
 		this.setFromIdUser(jo.optInt(context.getString(R.string.message_from_id_user)));
@@ -44,6 +51,16 @@ public class Message {
 	
 	public void setFromIdUser(int fromIdUser) {
 		this.mFromIdUser = fromIdUser;
+	}
+	
+	public void setIsMine() {
+		
+		this.mIsMine = true;
+		this.mDate = String.valueOf(Calendar.getInstance().getTimeInMillis() / 1000);
+	}
+	
+	public boolean getIsMine() {
+		return this.mIsMine;
 	}
 	
 	public String getDateString(Context context) {

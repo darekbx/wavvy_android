@@ -94,6 +94,7 @@ class Api {
         ." `from_id_user` INT NULL, "
         ." `target_id_user` INT NULL, "
         ." `message` TEXT NULL, "
+        ." `readed` TINYINT(1) DEFAULT 0, "
         ." `created` DATETIME NULL, "
         ." PRIMARY KEY(`id`)) CHARACTER SET utf8 COLLATE utf8_general_ci;";
     $this->connection->query($sql);
@@ -220,6 +221,7 @@ class Api {
     }
   }
 
+  // http://darekdev.cba.pl/?action=message&id_user=1
   function message($get) {
   
     if (!empty($get['from_id_user']) 
@@ -241,7 +243,7 @@ class Api {
           $is_new = true;
         }
         
-        $stmt = $this->connection->prepare("INSERT INTO `message` VALUES(null, ?, ?, ?, NOW())");
+        $stmt = $this->connection->prepare("INSERT INTO `message` VALUES(null, ?, ?, ?, 0, NOW())");
         $stmt->bind_param('iis', 
           $from_id_user, 
           $target_id_user, 
@@ -262,16 +264,29 @@ class Api {
     
       try {
 
-        $stmt = $this->connection->prepare("SELECT `from_id_user`, `message`, UNIX_TIMESTAMP(`created`) AS 'date' FROM `message`");
+        $sql = "SELECT `id`, `from_id_user`, `message`, UNIX_TIMESTAMP(`created`) AS 'date' FROM `message` WHERE `readed` = 0 ORDER BY `created` ASC";
+        $stmt = $this->connection->prepare($sql);
         $stmt->execute();
         
         $result = $stmt->get_result();
         $rows = array();
+        $ids = array();
         
-        while ($row = $result->fetch_assoc())
+        while ($row = $result->fetch_assoc()) {
+          
+          $ids[] = $row['id'];
           $rows[] = $row;
+        }
         
         $stmt->close();
+        
+        if (!empty($ids)) {
+          
+          // mark messages as readed
+          $stmt = $this->connection->prepare("UPDATE `message` SET `readed` = 1 WHERE `id` IN (". implode(",", $ids) .")");
+          $stmt->execute();
+          $stmt->close();
+        }
         
         echo json_encode($rows);
       } 

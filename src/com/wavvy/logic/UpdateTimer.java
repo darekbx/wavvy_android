@@ -8,7 +8,7 @@ import com.wavvy.listeners.TickListener;
 public class UpdateTimer {
 
 	private static Timer sTimer = null;
-	private static final int INTERVAL = 10000; // 30s
+	private static final int INTERVAL = 10000; // 10s
 	private static TickListener sListener;
 	
 	public static void start() {
