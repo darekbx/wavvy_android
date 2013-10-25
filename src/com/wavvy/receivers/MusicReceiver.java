@@ -41,9 +41,9 @@ public class MusicReceiver extends BroadcastReceiver {
 	private boolean saveTrack(final Track track) {
 	
 		try {
-			
-			this.saveToDatabase(track);
+
 			this.saveToWeb(track);
+			this.saveToDatabase(track);
 			
 			return true;
 		}

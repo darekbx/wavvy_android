@@ -36,4 +36,47 @@
             android:contentDescription="@string/icon_like" />
     </LinearLayout>
     
+    <LinearLayout 
+        android:id="@+id/messages_form"
+        android:visibility="visible"
+        android:layout_alignParentBottom="true"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="50dip"
+        android:orientation="vertical"
+        android:background="#fff"
+        android:paddingTop="6dip">
+            
+	    <ListView
+	        android:id="@+id/messages_list"
+	        android:layout_width="fill_parent"
+	        android:layout_height="0dip"
+	        android:layout_weight="1" />
+        
+	    <LinearLayout 
+	        android:layout_width="fill_parent"
+	        android:layout_height="50dip"
+	        android:layout_gravity="bottom"
+	        android:orientation="horizontal"
+	        android:paddingTop="4dip"
+	        android:paddingLeft="4dip"
+	        android:background="#ddd">
+	        <EditText 
+	            android:id="@+id/message_text"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:hint="@string/message_hint"
+	            android:inputType="textCapSentences" />
+	        <ImageButton 
+	            android:id="@+id/messages_send"
+            	android:src="@drawable/icon_message"
+	            android:layout_height="wrap_content"
+	            android:layout_width="wrap_content"
+				android:scaleType="fitCenter"
+            	android:contentDescription="@string/icon_message" />
+	    </LinearLayout>
+	    
+    </LinearLayout>
+    
 </RelativeLayout> 

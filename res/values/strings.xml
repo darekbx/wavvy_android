@@ -42,6 +42,10 @@
     <string name="message_from_id_user">from_id_user</string>
     <string name="message_message">message</string>
     <string name="message_date">date</string>
+    <string name="messages_send">Send</string>
+    <string name="messages_send_error">Failed to send message&#8230;</string>
+    <string name="messages_get_error">Failed to get messages&#8230;</string>
+    <string name="message_hint">Type here</string>
     
     <string name="user_nick_key">nick_key</string>
     <string name="user_id_key">id_key</string>
