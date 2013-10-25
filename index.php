@@ -264,8 +264,12 @@ class Api {
     
       try {
 
-        $sql = "SELECT `id`, `from_id_user`, `message`, UNIX_TIMESTAMP(`created`) AS 'date' FROM `message` WHERE `readed` = 0 ORDER BY `created` ASC";
+        $id_user = intval($get['id_user']);
+        
+        $sql = "SELECT `id`, `from_id_user`, `message`, UNIX_TIMESTAMP(`created`) AS 'date' FROM `message` "
+              ."WHERE `target_id_user` = ? AND `readed` = 0 ORDER BY `created` ASC";
         $stmt = $this->connection->prepare($sql);
+        $stmt->bind_param('i', $id_user);
         $stmt->execute();
         
         $result = $stmt->get_result();
