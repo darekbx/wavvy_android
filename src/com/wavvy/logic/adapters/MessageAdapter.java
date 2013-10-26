@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.wavvy.R;
@@ -46,9 +47,10 @@ public class MessageAdapter extends ArrayAdapter<Message> {
 			row = inflater.inflate(this.mLayoutResourceId, parent, false);
 			
 			holder = new ItemHolder();
-			holder.artistTextView = (TextView)row.findViewById(R.id.track_row_artist);
-			holder.titleTextView = (TextView)row.findViewById(R.id.track_row_title);
-			holder.numberTextView = (TextView)row.findViewById(R.id.track_row_number);
+			holder.messageParent = (LinearLayout)row.findViewById(R.id.message_row_parent);
+			holder.messageContainer = (LinearLayout)row.findViewById(R.id.message_row_container);
+			holder.dateTextView = (TextView)row.findViewById(R.id.message_row_date);
+			holder.textTextView = (TextView)row.findViewById(R.id.message_row_text);
 			
 			row.setTag(holder);
 		}
@@ -57,17 +59,30 @@ public class MessageAdapter extends ArrayAdapter<Message> {
 			holder = (ItemHolder)row.getTag();
 		}
 		
-		holder.artistTextView.setText(item.getDateString(this.mContext));
-		holder.titleTextView.setText(item.getMessage());
-		holder.numberTextView.setText(this.mContext.getString(R.string.dot_format, 1 + position));
+		holder.dateTextView.setText(item.getDateString(this.mContext));
+		holder.textTextView.setText(item.getMessage());
+		
+		if (item.getIsMine()) {
+		
+			holder.messageParent.setPadding(14, 14, 100, 14); // TODO: px to dip
+			holder.messageContainer.setBackgroundColor(
+					this.mContext.getResources().getColor(R.color.light_green));
+		}
+		else {
+			
+			holder.messageParent.setPadding(100, 14, 14, 14); // TODO: px to dip
+			holder.messageContainer.setBackgroundColor(
+					this.mContext.getResources().getColor(R.color.light_grey));
+		}
 
 		return row;
 	}
 	
 	private static class ItemHolder {
-	
-		public TextView artistTextView;
-		public TextView titleTextView;
-		public TextView numberTextView;
+
+		public LinearLayout messageParent;
+		public LinearLayout messageContainer;
+		public TextView dateTextView;
+		public TextView textTextView;
 	}
 }

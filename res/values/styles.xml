@@ -12,4 +12,16 @@
         <item name="android:height">40dip</item>
     </style>
     
+    <style name="message_row_date">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:typeface">serif</item>
+    </style>
+    
+    <style name="message_row_text">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:typeface">sans</item>
+    </style>
+    
 </resources>

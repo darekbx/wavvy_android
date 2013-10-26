@@ -18,7 +18,7 @@ public class MessageLogic extends BaseContext {
 	
 		super(context);
 
-		this.mAdapter = new MessageAdapter(context, R.layout.track_row);
+		this.mAdapter = new MessageAdapter(context, R.layout.message_row);
 		this.mList = list;
 		
 		this.mList.setAdapter(this.mAdapter);
@@ -44,5 +44,6 @@ public class MessageLogic extends BaseContext {
 	private void update() {
 		
 		this.mAdapter.notifyDataSetChanged();
+		this.mList.setSelection(this.mAdapter.getCount() - 1);
 	}
 }

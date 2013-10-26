@@ -215,23 +215,27 @@ containing a value of this type.
         public static final int menu_bar=0x7f06000a;
         public static final int menu_like=0x7f06000c;
         public static final int menu_message=0x7f06000b;
-        public static final int menu_reset=0x7f060019;
+        public static final int menu_reset=0x7f06001d;
+        public static final int message_row_container=0x7f060013;
+        public static final int message_row_date=0x7f060014;
+        public static final int message_row_parent=0x7f060012;
+        public static final int message_row_text=0x7f060015;
         public static final int message_text=0x7f06000f;
         public static final int messages_form=0x7f06000d;
         public static final int messages_list=0x7f06000e;
         public static final int messages_send=0x7f060010;
-        public static final int nick_dialog_error=0x7f060013;
-        public static final int nick_dialog_nick=0x7f060012;
-        public static final int nick_dialog_ok=0x7f060014;
-        public static final int nick_progress=0x7f060015;
+        public static final int nick_dialog_error=0x7f060017;
+        public static final int nick_dialog_nick=0x7f060016;
+        public static final int nick_dialog_ok=0x7f060018;
+        public static final int nick_progress=0x7f060019;
         public static final int none=0x7f060000;
         public static final int normal=0x7f060001;
         public static final int satellite=0x7f060002;
         public static final int songs_list=0x7f060006;
         public static final int terrain=0x7f060003;
-        public static final int track_row_artist=0x7f060016;
-        public static final int track_row_number=0x7f060018;
-        public static final int track_row_title=0x7f060017;
+        public static final int track_row_artist=0x7f06001a;
+        public static final int track_row_number=0x7f06001c;
+        public static final int track_row_title=0x7f06001b;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -239,8 +243,9 @@ containing a value of this type.
         public static final int activity_songs=0x7f030002;
         public static final int activity_start=0x7f030003;
         public static final int like_dialog=0x7f030004;
-        public static final int nick_dialog=0x7f030005;
-        public static final int track_row=0x7f030006;
+        public static final int message_row=0x7f030005;
+        public static final int nick_dialog=0x7f030006;
+        public static final int track_row=0x7f030007;
     }
     public static final class menu {
         public static final int main_menu=0x7f0a0000;
@@ -410,8 +415,10 @@ containing a value of this type.
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f090002;
+        public static final int AppBaseTheme=0x7f090004;
         public static final int custom_button=0x7f090001;
+        public static final int message_row_date=0x7f090002;
+        public static final int message_row_text=0x7f090003;
         public static final int track_row_text=0x7f090000;
     }
     public static final class styleable {

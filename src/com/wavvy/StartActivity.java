@@ -392,6 +392,9 @@ public class StartActivity extends FragmentActivity {
 		@Override
 		public void onMapClick(LatLng point) {
 
+			if (StartActivity.this.mMessagesAnimation.isExpanded())
+				return;
+			
 			StartActivity.this.mMenuAnimation.collapse();
 			StartActivity.this.mActiveMarker = null;
 		}
