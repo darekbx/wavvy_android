@@ -19,7 +19,8 @@
         android:layout_height="50dip"
         android:orientation="horizontal"
         android:background="#fff"
-        android:paddingTop="6dip">
+        android:paddingTop="6dip"
+        android:clickable="true">
         <ImageButton 
             android:id="@+id/menu_message"
             android:src="@drawable/icon_message"

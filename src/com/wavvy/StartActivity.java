@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.wavvy.animations.SlideAnimation;
 import com.wavvy.dialog.LikeDialog;
+import com.wavvy.dialog.MessageDialog;
 import com.wavvy.listeners.ActionListener;
 import com.wavvy.listeners.LikesListener;
 import com.wavvy.listeners.MessagesListener;
@@ -28,6 +29,8 @@ import com.wavvy.services.GpsService;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -66,6 +69,7 @@ public class StartActivity extends FragmentActivity {
 	private EditText mMessageText;
 	private Marker mActiveMarker = null;
 	private int mUserId = -1;
+	private int mNewMessageUserId = -1;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +103,7 @@ public class StartActivity extends FragmentActivity {
 			this.mLogic.loadPoints(false);
 			
 			this.checkLikes();
-			this.checkMessages();
+			this.loadMessages();
 		}
 	}
 	
@@ -146,6 +150,12 @@ public class StartActivity extends FragmentActivity {
 		if (this.mMessagesAnimation.isExpanded()) {
 		
 			this.mMessagesAnimation.collapse();
+			return;
+		}
+
+		if (this.mMenuAnimation.isExpanded()) {
+		
+			this.mMenuAnimation.collapse();
 			return;
 		}
 		
@@ -243,12 +253,29 @@ public class StartActivity extends FragmentActivity {
 			@Override
 			public void onSuccess(final List<Message> messages) {
 
-				StartActivity.this.runOnUiThread(new Runnable() {
+				final StartActivity parent = StartActivity.this;
+				
+				parent.runOnUiThread(new Runnable() {
 					
 					@Override
 					public void run() {
 				
-						StartActivity.this.mMessageLogic.addTheirs(messages);		
+						parent.mMessageLogic.addTheirs(messages);
+						
+						if (!parent.mMessagesAnimation.isExpanded()) {
+							
+							final MessageDialog dialog = new MessageDialog(StartActivity.this);
+							dialog.setOnDismissListener(new OnDismissListener() {
+								
+								@Override
+								public void onDismiss(DialogInterface dialog) {
+
+									parent.mNewMessageUserId = messages.get(0).getFromIdUser();
+									parent.mMessagesAnimation.expand();
+								}
+							});
+							dialog.show();
+						}
 					}
 				});
 			}
@@ -259,11 +286,6 @@ public class StartActivity extends FragmentActivity {
 				StartActivity.this.showMessage(R.string.messages_get_error);
 			}
 		});
-	}
-	
-	private void checkMessages() {
-	
-		// TODO:
 	}
 	
 	private TickListener mTick = new TickListener() {
@@ -307,12 +329,16 @@ public class StartActivity extends FragmentActivity {
 
 			final StartActivity parent = StartActivity.this;
 			final SongLocation location = parent.getActiveSongLocation();
+			int targetUserId = -1;
 			
-			if (location != null) {
+			if (location != null) targetUserId = location.getIdUser();
+			else if (parent.mNewMessageUserId != -1) targetUserId = parent.mNewMessageUserId;
+			
+			if (targetUserId != -1) {
 			
 				final String message = parent.mMessageText.getText().toString();
 				
-				new MessageManager(parent).send(location.getIdUser(), message, new ActionListener() {
+				new MessageManager(parent).send(targetUserId, message, new ActionListener() {
 					
 					@Override
 					public void onSuccess() {

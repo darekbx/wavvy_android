@@ -47,6 +47,7 @@
     <string name="messages_get_error">Failed to get messages&#8230;</string>
     <string name="message_hint">Type here</string>
     <string name="message_last_key">last_message_key</string>
+    <string name="message_new">Received new message!</string>
     
     <string name="user_nick_key">nick_key</string>
     <string name="user_id_key">id_key</string>
