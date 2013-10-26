@@ -253,6 +253,9 @@ public class StartActivity extends FragmentActivity {
 			@Override
 			public void onSuccess(final List<Message> messages) {
 
+				if (messages == null || messages.size() == 0)
+					return;
+				
 				final StartActivity parent = StartActivity.this;
 				
 				parent.runOnUiThread(new Runnable() {
