@@ -5,4 +5,5 @@
     <string name="db_track_create_syntax">CREATE TABLE IF NOT EXISTS %s (_id integer primary key autoincrement, artist TEXT, title TEXT, album TEXT, date TEXT)</string>
     <string name="db_track_insert">INSERT INTO %s VALUES (null, ?, ?, ?, ?)</string>
     <string name="db_where_id">_id = ?</string>
+    <string name="db_order_by_date">`date` DESC</string>
 </resources>

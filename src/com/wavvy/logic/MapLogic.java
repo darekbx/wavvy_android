@@ -1,6 +1,7 @@
 package com.wavvy.logic;
 
 import java.net.URI;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 
 import android.content.Context;
@@ -15,17 +16,21 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.wavvy.R;
 import com.wavvy.StartActivity;
+import com.wavvy.db.StorageManager;
 import com.wavvy.listeners.GetListener;
 import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Get;
 import com.wavvy.logic.parsers.LocationParser;
 import com.wavvy.model.SongLocation;
+import com.wavvy.model.Track;
 
 public class MapLogic {
 
 	private LinkedHashMap<SongLocation, Marker> mSongs;
 	private GoogleMap mMap;
+	private StorageManager mStorageManager;
 	private StartActivity mActivity;
+	private Track mLastTrack = null;
 
 	public MapLogic(StartActivity activity, GoogleMap map) {
 		
@@ -60,6 +65,7 @@ public class MapLogic {
 					@Override
 					public void run() {
 
+						MapLogic.this.setLastTrack();
 						MapLogic.this.addPoints();
 						MapLogic.this.addMyLocation();
 						
@@ -117,7 +123,18 @@ public class MapLogic {
 			.position(location.getPosition())
 			.title(location.toString())
 			.snippet(this.getDistance(location));
+		
 		final Marker marker = this.mMap.addMarker(markerOptions);
+		final int comprasion = SongComprasion.compare(this.mLastTrack, location);
+		int markerIcon = R.drawable.marker_grey;
+		
+		switch (comprasion) {
+		
+			case SongComprasion.SAME_TITLE: markerIcon = R.drawable.marker_star; break;
+			case SongComprasion.SAME_ARTIST: markerIcon = R.drawable.marker_blue; break;
+		}
+		
+		marker.setIcon(BitmapDescriptorFactory.fromResource(markerIcon));
 		
 		// associate marker to location
 		this.mSongs.put(location, marker);
@@ -141,6 +158,28 @@ public class MapLogic {
 		
 		if (distance < 1000) return this.getString(R.string.format_m, (int)distance);
 		else return this.getString(R.string.format_km, (int)(distance / 1000));
+	}
+	
+	private void setLastTrack() {
+	
+		this.mStorageManager = new StorageManager(this.getContext());
+		final Track track = this.mStorageManager.getLastTrack();
+		this.mStorageManager.close();
+		
+		if (track == null) {
+			
+			this.mLastTrack = null;
+			return;
+		}
+		
+		// check time
+		final Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MINUTE, -5); // 5 minutes
+		
+		final long timeAdd = calendar.getTimeInMillis();
+		
+		if (track.getDate() >= timeAdd) this.mLastTrack = track;
+		else this.mLastTrack = null;
 	}
 	
 	private void showMessage(final String message) {

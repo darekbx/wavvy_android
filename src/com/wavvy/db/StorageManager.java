@@ -63,7 +63,7 @@ public class StorageManager extends BaseContext {
 		
 		final Cursor cursor = this.mDataBase.query(
 				this.trackTableName(), this.trackColumns(),
-				null, null, null, null, null, limitString);
+				null, null, null, null, this.orderBy(), limitString);
 		
 		final List<Track> items = new ArrayList<Track>();
 		
@@ -79,6 +79,22 @@ public class StorageManager extends BaseContext {
 		cursor.close();
 		
 		return items;
+	}
+
+	public Track getLastTrack() {
+
+		final Cursor cursor = this.mDataBase.query(
+				this.trackTableName(), this.trackColumns(),
+				null, null, null, null, this.orderBy(), String.valueOf(1));
+		
+		Track track = null;
+		
+		if (cursor.moveToFirst())
+			track = this.getTrackFromCursor(cursor);
+		
+		cursor.close();
+		
+		return track;
 	}
 	
 	public Boolean reset() {
@@ -106,5 +122,10 @@ public class StorageManager extends BaseContext {
 	private String[] trackColumns() {
 
 		return this.getStringArray(R.array.track_columns);
+	}
+	
+	private String orderBy() {
+	
+		return this.getString(R.string.db_order_by_date);
 	}
 }

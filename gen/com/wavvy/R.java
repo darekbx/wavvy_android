@@ -201,9 +201,12 @@ containing a value of this type.
         public static final int icon_message=0x7f020022;
         public static final int icon_ok=0x7f020023;
         public static final int map_flag=0x7f020024;
-        public static final int ok_button=0x7f020025;
-        public static final int ok_button_selector=0x7f020026;
-        public static final int ok_pressed_button=0x7f020027;
+        public static final int marker_blue=0x7f020025;
+        public static final int marker_grey=0x7f020026;
+        public static final int marker_star=0x7f020027;
+        public static final int ok_button=0x7f020028;
+        public static final int ok_button_selector=0x7f020029;
+        public static final int ok_pressed_button=0x7f02002a;
     }
     public static final class id {
         public static final int hybrid=0x7f060004;
@@ -355,6 +358,7 @@ containing a value of this type.
          */
         public static final int common_signin_button_text_long=0x7f070012;
         public static final int db_name=0x7f07004d;
+        public static final int db_order_by_date=0x7f070052;
         public static final int db_track_create_syntax=0x7f07004f;
         public static final int db_track_insert=0x7f070050;
         public static final int db_track_tablename=0x7f07004e;
@@ -395,10 +399,10 @@ containing a value of this type.
         public static final int nick_too_short=0x7f070030;
         public static final int notification_text=0x7f07004c;
         public static final int notification_title=0x7f07004b;
-        public static final int receiver_album_key=0x7f070054;
-        public static final int receiver_artist_key=0x7f070053;
-        public static final int receiver_id_key=0x7f070052;
-        public static final int receiver_track_key=0x7f070055;
+        public static final int receiver_album_key=0x7f070055;
+        public static final int receiver_artist_key=0x7f070054;
+        public static final int receiver_id_key=0x7f070053;
+        public static final int receiver_track_key=0x7f070056;
         public static final int response_id_user=0x7f07004a;
         public static final int response_success=0x7f070049;
         public static final int service_name=0x7f07001a;
