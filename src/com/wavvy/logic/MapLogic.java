@@ -2,7 +2,7 @@ package com.wavvy.logic;
 
 import java.net.URI;
 import java.util.Calendar;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.location.Location;
@@ -26,11 +26,12 @@ import com.wavvy.model.Track;
 
 public class MapLogic {
 
-	private LinkedHashMap<SongLocation, Marker> mSongs;
+	private HashMap<SongLocation, Marker> mSongs;
 	private GoogleMap mMap;
 	private StorageManager mStorageManager;
 	private StartActivity mActivity;
 	private Track mLastTrack = null;
+	private SongLocation mTempSong = null;
 
 	public MapLogic(StartActivity activity, GoogleMap map) {
 		
@@ -38,14 +39,22 @@ public class MapLogic {
 		this.mMap = map;
 	}
 	
-	public void setData(LinkedHashMap<SongLocation, Marker> data) {
+	public void setData(HashMap<SongLocation, Marker> data) {
 	
 		this.mSongs = data;
 	}
 	
 	public SongLocation getSongLocation(Marker marker) {
 	
-		return (SongLocation)Utils.getKeyFromValue(this.mSongs, marker);
+		final SongLocation item = this.getSongLocationFromMarker(marker);
+		
+		if (item == null)
+			return this.mTempSong;
+		else {
+		
+			this.mTempSong = item;
+			return item;
+		}
 	}
 	
 	public void loadPoints(final boolean reload) {
@@ -192,6 +201,15 @@ public class MapLogic {
 				Toast.makeText(MapLogic.this.mActivity, message, Toast.LENGTH_SHORT).show();
 			}
 		});
+	}
+
+	public SongLocation getSongLocationFromMarker(Marker marker) {
+		
+		for (SongLocation song : this.mSongs.keySet())
+			if (this.mSongs.get(song).getId().equals(marker.getId()))
+				return song;
+		
+		return null;
 	}
 
 	private String getString(final int resourceId, Object... formatArgs) {

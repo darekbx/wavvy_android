@@ -86,6 +86,9 @@ public class StartActivity extends FragmentActivity {
 		this.mMap.setOnMapClickListener(this.mMapClick);
 		
 		this.mMessagesList = (ListView)this.findViewById(R.id.messages_list);
+
+		this.loadMenuAnimation();
+		this.loadMessagesAnimation();
 		
 		if (!Utils.isOnline(this))
 			Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_LONG).show();
@@ -96,8 +99,6 @@ public class StartActivity extends FragmentActivity {
 			
 			UpdateTimer.setTickListener(this.mTick);
 			
-			this.loadMenuAnimation();
-			this.loadMessagesAnimation();
 			this.loadEvents();
 			this.loadUser();
 			this.mLogic.loadPoints(false);
@@ -194,9 +195,9 @@ public class StartActivity extends FragmentActivity {
 	
 	private void loadMessagesAnimation() {
 
-		this.mMessagesAnimation = new SlideAnimation(this, 
-				(LinearLayout)this.findViewById(R.id.messages_form));
-		
+		final LinearLayout layout = (LinearLayout)this.findViewById(R.id.messages_form);
+
+		this.mMessagesAnimation = new SlideAnimation(this, layout);
 		this.mMessagesAnimation.setDuration(600);
 		this.mMessagesAnimation.collapse(true);
 	}
@@ -240,10 +241,7 @@ public class StartActivity extends FragmentActivity {
 		if (this.mActiveMarker == null)
 			return null;
 
-		final Marker marker = this.mActiveMarker;
-		final SongLocation location = this.mLogic.getSongLocation(marker);
-		
-		return location;
+		return this.mLogic.getSongLocation(this.mActiveMarker);
 	}
 	
 	private void loadMessages() {
@@ -336,9 +334,9 @@ public class StartActivity extends FragmentActivity {
 			
 			if (location != null) targetUserId = location.getIdUser();
 			else if (parent.mNewMessageUserId != -1) targetUserId = parent.mNewMessageUserId;
-			
+
 			if (targetUserId != -1) {
-			
+
 				final String message = parent.mMessageText.getText().toString();
 				
 				new MessageManager(parent).send(targetUserId, message, new ActionListener() {
@@ -425,7 +423,6 @@ public class StartActivity extends FragmentActivity {
 				return;
 			
 			StartActivity.this.mMenuAnimation.collapse();
-			StartActivity.this.mActiveMarker = null;
 		}
 	};
 	
