@@ -21,6 +21,7 @@ if (!empty($_GET)) {
       case 'locations': $api->locations(); break;
       case 'like': $api->like($_GET); break;
       case 'message': $api->message($_GET); break;
+      case 'nearest': $api->nearest($_GET); break;
       
       // --------------------------------------- TO REMOVE
       case 'all': $api->printAll(); break;
@@ -301,6 +302,83 @@ class Api {
     }
   }
   
+  // http://darekdev.cba.pl/?action=nearest&latitude=52.11&longitude=21.56
+  function nearest($get) {
+  
+    if (is_numeric($get['latitude']) && is_numeric($get['longitude'])) {
+      
+      try {
+        
+        $lat = doubleval($get['latitude']);
+        $lon = doubleval($get['longitude']);
+        
+        $select = "SELECT id, latitude, longitude FROM `song`";
+        $data = $this->connection->query($select);
+        
+        if ($data) {
+          
+          $distances = array();
+        
+          // loop through all songs...
+          while ($row = $data->fetch_assoc()) {
+            
+            // skip current location
+            if ($lat == $row['latitude'] && $lon == $row['longitude'])
+              continue;
+            
+            // find nearest distance
+            $distance = $this->haversineGreatCircleDistance($lat, $lon, $row['latitude'], $row['longitude']);
+            $add = true;
+            
+            // if exists, check if new distance is smaller
+            if (array_key_exists($row['id'], $distances)) {
+            
+              $existing = $distances[$row['id']];
+              $add = $existing > $distance;
+            }
+            
+            // set user distance
+            if ($add) {
+            
+              $distances[$row['id']] = array(
+                "distance" => intval($distance), 
+                "latitude" => $row['latitude'], 
+                "longitude" => $row['longitude']
+              );
+            }
+          }
+          
+          $data->close();
+          
+          if (count($distances) > 0) {
+          
+            // sort by distance
+            uasort($distances, $this->build_sorter('distance'));
+            $distance = reset($distances);
+            
+            echo json_encode(array("distance" => $distance['distance']));
+          }
+          else {
+          
+            echo json_encode(array("distance" => 0));
+          }
+        }
+        else {
+        
+            echo json_encode(array("distance" => 0));
+        }
+      } 
+      catch (Exception $e) {
+      
+        $this->printError($e->getMessage());
+      } 
+    }
+    else {
+    
+      $this->printError("Invalid one of parameters: logitude, latitude, id_user.");
+    }
+  }
+  
   function createUser() {
 
     $time = time();
@@ -375,6 +453,32 @@ class Api {
   function printAdded($message, $id) {
 
     echo json_encode(array("success" => $message, "id_user" => $id));
+  }
+  
+  function build_sorter($key) {
+
+    return function ($a, $b) use ($key) {
+
+      return strnatcmp($a[$key], $b[$key]);
+    };
+  }
+  
+  function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo) {
+
+    $earthRadius = 6371000;
+    
+    $latFrom = deg2rad($latitudeFrom);
+    $lonFrom = deg2rad($longitudeFrom);
+    $latTo = deg2rad($latitudeTo);
+    $lonTo = deg2rad($longitudeTo);
+
+    $latDelta = $latTo - $latFrom;
+    $lonDelta = $lonTo - $lonFrom;
+
+    $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+      cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+      
+    return $angle * $earthRadius;
   }
 }
 
