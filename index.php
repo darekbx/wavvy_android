@@ -337,15 +337,9 @@ class Api {
               $add = $existing > $distance;
             }
             
-            // set user distance
-            if ($add) {
-            
-              $distances[$row['id']] = array(
-                "distance" => intval($distance), 
-                "latitude" => $row['latitude'], 
-                "longitude" => $row['longitude']
-              );
-            }
+            // add distance
+            if ($add)
+              $distances[$row['id']] = intval($distance);
           }
           
           $data->close();
@@ -353,10 +347,10 @@ class Api {
           if (count($distances) > 0) {
           
             // sort by distance
-            uasort($distances, $this->build_sorter('distance'));
+            asort($distances);
             $distance = reset($distances);
-            
-            echo json_encode(array("distance" => $distance['distance']));
+          
+            echo json_encode(array("distance" => $distance));
           }
           else {
           
@@ -365,7 +359,7 @@ class Api {
         }
         else {
         
-            echo json_encode(array("distance" => 0));
+          echo json_encode(array("distance" => 0));
         }
       } 
       catch (Exception $e) {
@@ -453,14 +447,6 @@ class Api {
   function printAdded($message, $id) {
 
     echo json_encode(array("success" => $message, "id_user" => $id));
-  }
-  
-  function build_sorter($key) {
-
-    return function ($a, $b) use ($key) {
-
-      return strnatcmp($a[$key], $b[$key]);
-    };
   }
   
   function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo) {

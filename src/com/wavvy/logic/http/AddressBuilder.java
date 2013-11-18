@@ -128,6 +128,24 @@ public class AddressBuilder extends BaseContext {
 		}
 	}
 
+	public URI nearest(LatLng location) {
+
+		final StringBuilder builder = new StringBuilder();
+		builder.append(this.getString(R.string.address_base));
+		builder.append(this.getString(R.string.address_nearest, 
+				location.latitude, location.longitude));
+
+		try {
+			
+			return new URI(builder.toString());
+		} 
+		catch (URISyntaxException e) {
+			
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	@Deprecated
 	public URI registerNick(String nick) {
 

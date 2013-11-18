@@ -262,9 +262,9 @@ containing a value of this type.
         public static final int address_locations=0x7f070026;
         public static final int address_message=0x7f070029;
         public static final int address_messages=0x7f07002a;
-        public static final int address_nearest=0x7f07002d;
-        public static final int address_registernick=0x7f07002b;
-        public static final int address_userlocations=0x7f07002c;
+        public static final int address_nearest=0x7f07002b;
+        public static final int address_registernick=0x7f07002c;
+        public static final int address_userlocations=0x7f07002d;
         public static final int app_name=0x7f070019;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
