@@ -4,6 +4,9 @@ import java.net.URI;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.location.Location;
 import android.widget.Toast;
@@ -12,6 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.wavvy.R;
@@ -98,9 +102,12 @@ public class MapLogic {
 	public void zoomToUser() {
 
 		final LatLng location = LocationHelper.getLocation(this.getContext());
-		
-		this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 8));
+
+		//this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 8));
 		this.mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
+		
+		// zoom to nearest user
+		this.findNearestUser(location);
 	}
 	
 	public void addPoints() {
@@ -149,6 +156,78 @@ public class MapLogic {
 		this.mSongs.put(location, marker);
 		
 		return marker;
+	}
+	
+	private void findNearestUser(final LatLng userPosition) {
+		
+		final URI address = new AddressBuilder(this.mActivity).nearest(userPosition);
+		final Get get = new Get();
+		get.setOnGetListener(new GetListener() {
+			
+			@Override
+			public void success(final String content) {
+
+				final LatLng nearest = MapLogic.this.parseDistance(content);
+				
+				if (nearest == null)
+					return;
+				
+				MapLogic.this.mActivity.runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+
+						MapLogic.this.zoomToNearest(userPosition, nearest);
+					}
+				});
+			}
+			
+			@Override
+			public void failed(final String message) { 
+				
+				MapLogic.this.showMessage(message);
+			}
+		});
+		
+		if (address != null)
+			get.execute(address);
+	}
+	
+	private LatLng parseDistance(final String content) {
+		
+		try {
+
+			final JSONObject jo = new JSONObject(content);
+			final String distanceKey = this.getString(R.string.map_distance);
+			
+			if (jo.has(distanceKey)) {
+				
+				final int distance = jo.optInt(distanceKey);
+				
+				if (distance <= 0)
+					return null;
+				
+				final double lat = jo.optDouble(this.getString(R.string.map_latitude));
+				final double lon = jo.optDouble(this.getString(R.string.map_longitude));
+				
+				return new LatLng(lat, lon);
+			}
+		} 
+		catch (JSONException e) {
+			
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	private void zoomToNearest(final LatLng userPosition, final LatLng nearest) {
+		
+		final LatLngBounds bounds = new LatLngBounds.Builder()
+	        .include(new LatLng(nearest.latitude, nearest.longitude))
+	        .include(new LatLng(userPosition.latitude, userPosition.longitude)).build();
+
+		this.mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 250, 250, 30));
 	}
 	
 	private String getDistance(SongLocation target) {

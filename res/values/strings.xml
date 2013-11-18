@@ -25,7 +25,10 @@
     
     <string name="address_registernick">"?action=registernick&amp;nick=%s"</string>
     <string name="address_userlocations">"?action=userlocations&amp;id_user=%s"</string>
-    <string name="address_nearest" formatted="false">"?action=nearest&amp;latitude=%s&amp;longitude=%s&amp;id_user=%s"</string>
+    
+    <string name="map_distance">distance</string>
+    <string name="map_latitude">latitude</string>
+    <string name="map_longitude">longitude</string>
     
     <string name="nick_enter_nick">Enter your nick</string>
     <string name="nick_empty">Enter nick.</string>

@@ -25,6 +25,7 @@ import com.wavvy.logic.storage.LikeStorage;
 import com.wavvy.logic.storage.UserStorage;
 import com.wavvy.model.Message;
 import com.wavvy.model.SongLocation;
+import com.wavvy.model.User;
 import com.wavvy.services.GpsService;
 
 import android.content.BroadcastReceiver;
@@ -84,6 +85,10 @@ public class StartActivity extends FragmentActivity {
 		this.mMap.setMyLocationEnabled(true);
 		this.mMap.setOnMarkerClickListener(this.mMarkerClick);
 		this.mMap.setOnMapClickListener(this.mMapClick);
+		
+		// TODO:
+		//new UserStorage(this).setUser(new User(9, "User")); 
+		//
 		
 		this.mMessagesList = (ListView)this.findViewById(R.id.messages_list);
 
