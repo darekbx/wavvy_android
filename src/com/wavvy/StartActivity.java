@@ -2,10 +2,14 @@ package com.wavvy;
 
 import java.util.List;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.wavvy.animations.SlideAnimation;
@@ -32,15 +36,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class StartActivity extends FragmentActivity {
@@ -71,6 +80,8 @@ public class StartActivity extends FragmentActivity {
 	private int mUserId = -1;
 	private int mNewMessageUserId = -1;
 	
+	//private boolean mstop = false;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -84,6 +95,28 @@ public class StartActivity extends FragmentActivity {
 		this.mMap.setMyLocationEnabled(true);
 		this.mMap.setOnMarkerClickListener(this.mMarkerClick);
 		this.mMap.setOnMapClickListener(this.mMapClick);
+		/*this.mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+			
+			@Override
+			public void onCameraChange(CameraPosition position) {
+
+				if (mstop || mActiveMarker == null)
+					return;
+						
+				final Projection projection = StartActivity.this.mMap.getProjection();
+				final Point p = projection.toScreenLocation(position.target);
+
+				mMap.animateCamera(CameraUpdateFactory.scrollBy(-(p.x - 40), (p.y - 40)));
+				mstop = true;
+				
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				params.leftMargin = p.x;
+				params.topMargin = p.y;
+				
+				((Button)findViewById(R.id.testb)).setLayoutParams(params);
+			}
+		});*/
 		
 		// TODO:
 		//new UserStorage(this).setUser(new User(9, "User")); 
@@ -414,6 +447,7 @@ public class StartActivity extends FragmentActivity {
 			
 			StartActivity.this.mMenuAnimation.expand();
 			StartActivity.this.mActiveMarker = marker;
+
 			return false;
 		}
 	};
