@@ -15,17 +15,16 @@ import com.wavvy.listeners.ActionListener;
 import com.wavvy.listeners.LikesListener;
 import com.wavvy.listeners.MessagesListener;
 import com.wavvy.listeners.TickListener;
-import com.wavvy.logic.MapLogic;
 import com.wavvy.logic.MessageLogic;
 import com.wavvy.logic.UpdateTimer;
 import com.wavvy.logic.http.Utils;
 import com.wavvy.logic.managers.LikeManager;
 import com.wavvy.logic.managers.MessageManager;
+import com.wavvy.logic.map.MapLogic;
 import com.wavvy.logic.storage.LikeStorage;
 import com.wavvy.logic.storage.UserStorage;
 import com.wavvy.model.Message;
 import com.wavvy.model.SongLocation;
-import com.wavvy.model.User;
 import com.wavvy.services.GpsService;
 
 import android.content.BroadcastReceiver;

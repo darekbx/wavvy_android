@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    
+    <TextView 
+        android:id="@+id/info_window_title"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/info_window_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="50dip"
+        android:orientation="horizontal"
+        android:background="#fff"
+        android:paddingTop="6dip"
+        android:clickable="true">
+        <ImageButton 
+            android:id="@+id/info_window_message"
+            android:src="@drawable/icon_message"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" 
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/icon_message" />
+        <ImageButton 
+            android:id="@+id/info_window_like"
+            android:src="@drawable/icon_like"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" 
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/icon_like" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,11 +1,8 @@
-package com.wavvy.logic;
+package com.wavvy.logic.map;
 
 import java.net.URI;
 import java.util.Calendar;
 import java.util.HashMap;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.Context;
 import android.location.Location;
@@ -22,8 +19,12 @@ import com.wavvy.R;
 import com.wavvy.StartActivity;
 import com.wavvy.db.StorageManager;
 import com.wavvy.listeners.GetListener;
+import com.wavvy.logic.LocationHelper;
+import com.wavvy.logic.SongComprasion;
+import com.wavvy.logic.Utils;
 import com.wavvy.logic.http.AddressBuilder;
 import com.wavvy.logic.http.Get;
+import com.wavvy.logic.parsers.DistanceParser;
 import com.wavvy.logic.parsers.LocationParser;
 import com.wavvy.model.SongLocation;
 import com.wavvy.model.Track;
@@ -36,11 +37,14 @@ public class MapLogic {
 	private StartActivity mActivity;
 	private Track mLastTrack = null;
 	private SongLocation mTempSong = null;
+	private DistanceParser mParsers = null;
 
 	public MapLogic(StartActivity activity, GoogleMap map) {
 		
 		this.mActivity = activity;
 		this.mMap = map;
+		
+		this.mParsers = new DistanceParser(this.getContext());
 	}
 	
 	public void setData(HashMap<SongLocation, Marker> data) {
@@ -50,7 +54,14 @@ public class MapLogic {
 	
 	public SongLocation getSongLocation(Marker marker) {
 	
-		final SongLocation item = this.getSongLocationFromMarker(marker);
+		SongLocation item = null;
+		
+		for (SongLocation song : this.mSongs.keySet())
+			if (this.mSongs.get(song).getId().equals(marker.getId())) {
+				
+				item = song;
+				break;
+			}
 		
 		if (item == null)
 			return this.mTempSong;
@@ -102,12 +113,21 @@ public class MapLogic {
 	public void zoomToUser() {
 
 		final LatLng location = LocationHelper.getLocation(this.getContext());
-
-		//this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 8));
 		this.mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
 		
 		// zoom to nearest user
 		this.findNearestUser(location);
+	}
+	
+	private void zoomToBounds(final LatLng positionA, final LatLng positionB) {
+		
+		final LatLngBounds bounds = new LatLngBounds.Builder()
+	        .include(new LatLng(positionB.latitude, positionB.longitude))
+	        .include(new LatLng(positionA.latitude, positionA.longitude)).build();
+
+		final int padding = Utils.screenWidth(this.getContext()) / 4;
+		
+		this.mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
 	}
 	
 	public void addPoints() {
@@ -167,7 +187,7 @@ public class MapLogic {
 			@Override
 			public void success(final String content) {
 
-				final LatLng nearest = MapLogic.this.parseDistance(content);
+				final LatLng nearest = MapLogic.this.mParsers.parseDistance(content);
 				
 				if (nearest == null)
 					return;
@@ -177,7 +197,7 @@ public class MapLogic {
 					@Override
 					public void run() {
 
-						MapLogic.this.zoomToNearest(userPosition, nearest);
+						MapLogic.this.zoomToBounds(userPosition, nearest);
 					}
 				});
 			}
@@ -191,43 +211,6 @@ public class MapLogic {
 		
 		if (address != null)
 			get.execute(address);
-	}
-	
-	private LatLng parseDistance(final String content) {
-		
-		try {
-
-			final JSONObject jo = new JSONObject(content);
-			final String distanceKey = this.getString(R.string.map_distance);
-			
-			if (jo.has(distanceKey)) {
-				
-				final int distance = jo.optInt(distanceKey);
-				
-				if (distance <= 0)
-					return null;
-				
-				final double lat = jo.optDouble(this.getString(R.string.map_latitude));
-				final double lon = jo.optDouble(this.getString(R.string.map_longitude));
-				
-				return new LatLng(lat, lon);
-			}
-		} 
-		catch (JSONException e) {
-			
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-	
-	private void zoomToNearest(final LatLng userPosition, final LatLng nearest) {
-		
-		final LatLngBounds bounds = new LatLngBounds.Builder()
-	        .include(new LatLng(nearest.latitude, nearest.longitude))
-	        .include(new LatLng(userPosition.latitude, userPosition.longitude)).build();
-
-		this.mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 250, 250, 30));
 	}
 	
 	private String getDistance(SongLocation target) {
@@ -280,15 +263,6 @@ public class MapLogic {
 				Toast.makeText(MapLogic.this.mActivity, message, Toast.LENGTH_SHORT).show();
 			}
 		});
-	}
-
-	public SongLocation getSongLocationFromMarker(Marker marker) {
-		
-		for (SongLocation song : this.mSongs.keySet())
-			if (this.mSongs.get(song).getId().equals(marker.getId()))
-				return song;
-		
-		return null;
 	}
 
 	private String getString(final int resourceId, Object... formatArgs) {

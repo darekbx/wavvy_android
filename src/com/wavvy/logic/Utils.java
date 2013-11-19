@@ -3,6 +3,7 @@ package com.wavvy.logic;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import android.content.Context;
 import android.util.Base64;
 
 public class Utils {
@@ -42,5 +43,10 @@ public class Utils {
 			e.printStackTrace();
 			return text64;
 		}
+	}
+	
+	public static int screenWidth(Context context) {
+	
+		return context.getResources().getDisplayMetrics().widthPixels;
 	}
 }
