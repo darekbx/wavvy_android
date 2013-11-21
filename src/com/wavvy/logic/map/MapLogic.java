@@ -161,12 +161,12 @@ public class MapLogic {
 			.snippet(this.getDistance(location));
 		
 		final Marker marker = this.mMap.addMarker(markerOptions);
-		final int comprasion = SongComprasion.compare(this.mLastTrack, location);
+		final int comprasion = SongComprasion.compareExtract(this.mLastTrack, location);
 		int markerIcon = R.drawable.marker_grey;
 		
 		switch (comprasion) {
 		
-			case SongComprasion.SAME_TITLE: markerIcon = R.drawable.marker_star; break;
+			case SongComprasion.SAME_ARTIST_AND_TITLE: markerIcon = R.drawable.marker_star; break;
 			case SongComprasion.SAME_ARTIST: markerIcon = R.drawable.marker_blue; break;
 		}
 		

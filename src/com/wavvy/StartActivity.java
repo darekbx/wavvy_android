@@ -2,14 +2,10 @@ package com.wavvy;
 
 import java.util.List;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.wavvy.animations.SlideAnimation;
@@ -36,20 +32,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class StartActivity extends FragmentActivity {
@@ -89,7 +80,7 @@ public class StartActivity extends FragmentActivity {
 
 		this.setContentView(R.layout.activity_start);
 		this.startService(new Intent(this, GpsService.class));
-		
+				
 		final Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.map);
 		this.mMap = ((SupportMapFragment)fragment).getMap();
 		this.mMap.setMyLocationEnabled(true);
