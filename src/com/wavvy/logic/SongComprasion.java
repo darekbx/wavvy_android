@@ -71,15 +71,14 @@ public class SongComprasion {
 	
 	private static String[] extract(String value) {
 		
-		value = value.replaceAll("[^\\x00-\\x7F]", " ");
-		return value.split(" ");
+		return SongComprasion.normalize(value).split(" ");
 	}
 	
 	private static String normalize(String value) {
 	
 		return value
-				.replaceAll("[^\\x00-\\x7F]", "")
-				.replaceAll("[^A-Za-z0-9]", "")
+				.replaceAll("[^\\x00-\\x7F]", " ")
+				.replaceAll("[^A-Za-z0-9]", " ")
 				.toLowerCase(Locale.getDefault());
 	}
 }
