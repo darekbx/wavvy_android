@@ -56,6 +56,16 @@ public class Track {
 				|| this.mAlbum != null;
 	}
 	
+	public boolean hasArtist() {
+	
+		return this.mArtist != null && this.mArtist.length() > 0;
+	}
+	
+	public boolean hasTitle() {
+	
+		return this.mTitle != null && this.mTitle.length() > 0;
+	}
+	
 	public int getId() {
 		return this.mId;
 	}

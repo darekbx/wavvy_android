@@ -204,9 +204,10 @@ containing a value of this type.
         public static final int marker_blue=0x7f020025;
         public static final int marker_grey=0x7f020026;
         public static final int marker_star=0x7f020027;
-        public static final int ok_button=0x7f020028;
-        public static final int ok_button_selector=0x7f020029;
-        public static final int ok_pressed_button=0x7f02002a;
+        public static final int message_icon=0x7f020028;
+        public static final int ok_button=0x7f020029;
+        public static final int ok_button_selector=0x7f02002a;
+        public static final int ok_pressed_button=0x7f02002b;
     }
     public static final class id {
         public static final int hybrid=0x7f060004;

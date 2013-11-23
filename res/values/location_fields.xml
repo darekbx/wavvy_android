@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="location_fields">
+        <item>id</item>
 	    <item>id_user</item>
         <item>artist</item>
         <item>title</item>
         <item>album</item>
 	    <item>latitude</item>
 	    <item>longitude</item>
+        <item>id_message</item>
 	    <item>date</item>
     </string-array>
 </resources>

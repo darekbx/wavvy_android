@@ -1,8 +1,10 @@
 package com.wavvy.logic.map;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.Context;
 import android.location.Location;
@@ -15,8 +17,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.wavvy.MainActivity;
 import com.wavvy.R;
-import com.wavvy.StartActivity;
 import com.wavvy.db.StorageManager;
 import com.wavvy.listeners.GetListener;
 import com.wavvy.logic.LocationHelper;
@@ -34,17 +36,32 @@ public class MapLogic {
 	private HashMap<SongLocation, Marker> mSongs;
 	private GoogleMap mMap;
 	private StorageManager mStorageManager;
-	private StartActivity mActivity;
+	private MainActivity mActivity;
 	private Track mLastTrack = null;
 	private SongLocation mTempSong = null;
 	private DistanceParser mParsers = null;
+	private List<Integer> mActiveChat;
 
-	public MapLogic(StartActivity activity, GoogleMap map) {
+	public MapLogic(MainActivity activity, GoogleMap map) {
 		
 		this.mActivity = activity;
 		this.mMap = map;
 		
 		this.mParsers = new DistanceParser(this.getContext());
+		this.mActiveChat = new ArrayList<Integer>();
+	}
+	
+	public void addChatId(int id) {
+	
+		if (this.mActiveChat.contains(id))
+			return;
+		
+		this.mActiveChat.add(id);
+	}
+	
+	public boolean containsChatId(int id) {
+	
+		return this.mActiveChat.contains(id);
 	}
 	
 	public void setData(HashMap<SongLocation, Marker> data) {
@@ -52,7 +69,7 @@ public class MapLogic {
 		this.mSongs = data;
 	}
 	
-	public SongLocation getSongLocation(Marker marker) {
+	public SongLocation getSongLocation(final Marker marker) {
 	
 		SongLocation item = null;
 		
@@ -70,6 +87,15 @@ public class MapLogic {
 			this.mTempSong = item;
 			return item;
 		}
+	}
+	
+	public Marker getMarker(final SongLocation song) {
+
+		for (SongLocation item : this.mSongs.keySet())
+			if (item.getIdUser() == song.getIdUser() && item.getDate().equals(song.getDate()))
+				return this.mSongs.get(item);
+		
+		return null;
 	}
 	
 	public void loadPoints(final boolean reload) {
@@ -161,13 +187,22 @@ public class MapLogic {
 			.snippet(this.getDistance(location));
 		
 		final Marker marker = this.mMap.addMarker(markerOptions);
-		final int comprasion = SongComprasion.compareExtract(this.mLastTrack, location);
-		int markerIcon = R.drawable.marker_grey;
+		int markerIcon;
 		
-		switch (comprasion) {
-		
-			case SongComprasion.SAME_ARTIST_AND_TITLE: markerIcon = R.drawable.marker_star; break;
-			case SongComprasion.SAME_ARTIST: markerIcon = R.drawable.marker_blue; break;
+		if (this.containsChatId(location.getId()) || location.hasMessage()) {
+			
+			markerIcon = R.drawable.icon_message;
+		}
+		else {
+			
+			final int comprasion = SongComprasion.compareExtract(this.mLastTrack, location);
+			markerIcon = R.drawable.marker_grey;
+			
+			switch (comprasion) {
+			
+				case SongComprasion.SAME_ARTIST_AND_TITLE: markerIcon = R.drawable.marker_star; break;
+				case SongComprasion.SAME_ARTIST: markerIcon = R.drawable.marker_blue; break;
+			}
 		}
 		
 		marker.setIcon(BitmapDescriptorFactory.fromResource(markerIcon));

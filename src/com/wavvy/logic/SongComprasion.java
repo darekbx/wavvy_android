@@ -3,6 +3,7 @@ package com.wavvy.logic;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
+
 import com.wavvy.model.SongLocation;
 import com.wavvy.model.Track;
 
@@ -22,23 +23,17 @@ public class SongComprasion {
 		int artistResult = 0;
 		int titleResult = 0;
 		
-		if (track.getArtist() != null 
-			&& song.getArtist() != null
-			&& track.getArtist().length() > 0
-			&& song.getArtist().length() > 0) {
+		if (track.hasArtist() && song.hasArtist()) {
 
 			final String[] artist1 = SongComprasion.extract(track.getArtist());
 			final String[] artist2 = SongComprasion.extract(song.getArtist());
 			artistResult = SongComprasion.calculateOccurances(artist1, artist2);
 			
-			if (track.getTitle() != null 
-				&& song.getTitle() != null
-				&& track.getTitle().length() > 0
-				&& song.getTitle().length() > 0) {
+			if (track.hasTitle() && song.hasTitle()) {
 
 				final String[] title1 = SongComprasion.extract(track.getTitle());
 				final String[] title2 = SongComprasion.extract(song.getTitle());
-				titleResult = SongComprasion.calculateOccurances(title1, title2);	
+				titleResult = SongComprasion.calculateOccurances(title1, title2);
 			}
 		}
 		

@@ -43,7 +43,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class StartActivity extends FragmentActivity {
+@Deprecated
+public class XSecond_StartActivity extends FragmentActivity {
 
 	public class RefreshReceiver extends BroadcastReceiver {
 		 
@@ -123,7 +124,7 @@ public class StartActivity extends FragmentActivity {
 		else {
 		
 			this.mMessageLogic = new MessageLogic(this, this.mMessagesList);
-			this.mLogic = new MapLogic(this, this.mMap);
+			//this.mLogic = new MapLogic(this, this.mMap);
 			
 			UpdateTimer.setTickListener(this.mTick);
 			
@@ -132,7 +133,6 @@ public class StartActivity extends FragmentActivity {
 			this.mLogic.loadPoints(false);
 			
 			this.checkLikes();
-			this.loadMessages();
 		}
 	}
 	
@@ -249,12 +249,12 @@ public class StartActivity extends FragmentActivity {
 				// received like!
 				storage.setLikesCount(likes);
 				
-				StartActivity.this.runOnUiThread(new Runnable() {
+				XSecond_StartActivity.this.runOnUiThread(new Runnable() {
 					
 					@Override
 					public void run() {
 						
-						new LikeDialog(StartActivity.this).show();
+						new LikeDialog(XSecond_StartActivity.this).show();
 					}
 				});
 			}
@@ -282,7 +282,7 @@ public class StartActivity extends FragmentActivity {
 				if (messages == null || messages.size() == 0)
 					return;
 				
-				final StartActivity parent = StartActivity.this;
+				final XSecond_StartActivity parent = XSecond_StartActivity.this;
 				
 				parent.runOnUiThread(new Runnable() {
 					
@@ -293,7 +293,7 @@ public class StartActivity extends FragmentActivity {
 						
 						if (!parent.mMessagesAnimation.isExpanded()) {
 							
-							final MessageDialog dialog = new MessageDialog(StartActivity.this);
+							final MessageDialog dialog = new MessageDialog(XSecond_StartActivity.this);
 							dialog.setOnDismissListener(new OnDismissListener() {
 								
 								@Override
@@ -312,7 +312,7 @@ public class StartActivity extends FragmentActivity {
 			@Override
 			public void onError() {
 
-				StartActivity.this.showMessage(R.string.messages_get_error);
+				XSecond_StartActivity.this.showMessage(R.string.messages_get_error);
 			}
 		});
 	}
@@ -322,9 +322,8 @@ public class StartActivity extends FragmentActivity {
 		@Override
 		public void onTick() {
 
-			StartActivity.this.mLogic.loadPoints(true);
-			StartActivity.this.checkLikes();
-			StartActivity.this.loadMessages();
+			XSecond_StartActivity.this.mLogic.loadPoints(true);
+			XSecond_StartActivity.this.checkLikes();
 		}
 	};
 
@@ -333,7 +332,7 @@ public class StartActivity extends FragmentActivity {
 		@Override
 		public void onClick(View v) {
 
-			StartActivity.this.mMessagesAnimation.expand();
+			XSecond_StartActivity.this.mMessagesAnimation.expand();
 		}
 	};
 
@@ -341,7 +340,7 @@ public class StartActivity extends FragmentActivity {
 		
 		private void setState(boolean enabled) {
 
-			final StartActivity parent = StartActivity.this;
+			final XSecond_StartActivity parent = XSecond_StartActivity.this;
 			
 			parent.mMessageText.setEnabled(enabled);
 			parent.mSendMessage.setEnabled(enabled);
@@ -356,7 +355,7 @@ public class StartActivity extends FragmentActivity {
 		@Override
 		public void onClick(View v) {
 
-			final StartActivity parent = StartActivity.this;
+			final XSecond_StartActivity parent = XSecond_StartActivity.this;
 			final SongLocation location = parent.getActiveSongLocation();
 			int targetUserId = -1;
 			
@@ -372,7 +371,7 @@ public class StartActivity extends FragmentActivity {
 					@Override
 					public void onSuccess() {
 
-						StartActivity.this.runOnUiThread(new Runnable() {
+						XSecond_StartActivity.this.runOnUiThread(new Runnable() {
 							
 							@Override
 							public void run() {
@@ -388,7 +387,7 @@ public class StartActivity extends FragmentActivity {
 					@Override
 					public void onError() {
 
-						StartActivity.this.runOnUiThread(new Runnable() {
+						XSecond_StartActivity.this.runOnUiThread(new Runnable() {
 							
 							@Override
 							public void run() {
@@ -411,7 +410,7 @@ public class StartActivity extends FragmentActivity {
 		@Override
 		public void onClick(View v) {
 
-			final StartActivity parent = StartActivity.this;
+			final XSecond_StartActivity parent = XSecond_StartActivity.this;
 			final SongLocation location = parent.getActiveSongLocation();
 			
 			if (location != null) {
@@ -436,8 +435,8 @@ public class StartActivity extends FragmentActivity {
 			if (marker.getTitle() == null)
 				return false;
 			
-			StartActivity.this.mMenuAnimation.expand();
-			StartActivity.this.mActiveMarker = marker;
+			XSecond_StartActivity.this.mMenuAnimation.expand();
+			XSecond_StartActivity.this.mActiveMarker = marker;
 
 			return false;
 		}
@@ -448,10 +447,10 @@ public class StartActivity extends FragmentActivity {
 		@Override
 		public void onMapClick(LatLng point) {
 
-			if (StartActivity.this.mMessagesAnimation.isExpanded())
+			if (XSecond_StartActivity.this.mMessagesAnimation.isExpanded())
 				return;
 			
-			StartActivity.this.mMenuAnimation.collapse();
+			XSecond_StartActivity.this.mMenuAnimation.collapse();
 		}
 	};
 	
@@ -467,7 +466,7 @@ public class StartActivity extends FragmentActivity {
 			@Override
 			public void run() {
 
-				Toast.makeText(StartActivity.this, message, Toast.LENGTH_SHORT).show();
+				Toast.makeText(XSecond_StartActivity.this, message, Toast.LENGTH_SHORT).show();
 			}
 		});
 	}

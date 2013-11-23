@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.wavvy.R;
-import com.wavvy.StartActivity.RefreshReceiver;
+import com.wavvy.MainActivity.RefreshReceiver;
 import com.wavvy.db.StorageManager;
 import com.wavvy.listeners.PostListener;
 import com.wavvy.logic.Scrobbler;

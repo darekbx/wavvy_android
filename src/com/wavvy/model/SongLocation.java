@@ -11,7 +11,9 @@ public class SongLocation {
 	
 	private double mLatitude;
 	private double mLongitude;
+	private int mId;
 	private int mIdUser;
+	private int mIdMessage;
 	private String mArtist;
 	private String mAlbum;
 	private String mTitle;
@@ -25,14 +27,31 @@ public class SongLocation {
 	public void fromJsonObject(JSONObject jo, Context context) {
 
 		final String[] fields = context.getResources().getStringArray(R.array.location_fields);
-		
-		this.setIdUser(jo.optInt(fields[0]));
-		this.setArtist(jo.optString(fields[1]));
-		this.setTitle(jo.optString(fields[2]));
-		this.setAlbum(jo.optString(fields[3]));
-		this.setLatitude(jo.optDouble(fields[4]));
-		this.setLongitude(jo.optDouble(fields[5]));
-		this.setDate(jo.optString(fields[6]));
+
+		this.setId(jo.optInt(fields[0]));
+		this.setIdUser(jo.optInt(fields[1]));
+		this.setArtist(jo.optString(fields[2]));
+		this.setTitle(jo.optString(fields[3]));
+		this.setAlbum(jo.optString(fields[4]));
+		this.setLatitude(jo.optDouble(fields[5]));
+		this.setLongitude(jo.optDouble(fields[6]));
+		this.setIdMessage(jo.optInt(fields[7]));
+		this.setDate(jo.optString(fields[8]));
+	}
+	
+	public boolean hasMessage() {
+	
+		return this.mIdMessage > 0;
+	}
+	
+	public boolean hasArtist() {
+	
+		return this.mArtist != null && this.mArtist.length() > 0;
+	}
+	
+	public boolean hasTitle() {
+	
+		return this.mTitle != null && this.mTitle.length() > 0;
 	}
 	
 	public double getLatitude() {
@@ -51,6 +70,14 @@ public class SongLocation {
 		this.mLongitude = longitude;
 	}
 
+	public int getId() {
+		return this.mId;
+	}
+	
+	public void setId(int id) {
+		this.mId = id;
+	}
+	
 	public int getIdUser() {
 		return this.mIdUser;
 	}
@@ -81,6 +108,14 @@ public class SongLocation {
 	
 	public void setAlbum(String album) {
 		this.mAlbum = album;
+	}
+
+	public int getIdMessage() {
+		return this.mIdMessage;
+	}
+	
+	public void setIdMessage(int id) {
+		this.mIdMessage = id;
 	}
 
 	public String getDate() {
