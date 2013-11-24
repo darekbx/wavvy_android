@@ -1,19 +1,26 @@
 package com.wavvy;
 
+/*
+ * sprawdzanie like'ow - w service + notyfikacja
+ * sprawdzenie wiadomosc - w service + notyfikacja
+ * 
+ */
+
 import java.util.List;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.wavvy.animations.SlideAnimation;
-import com.wavvy.dialog.LikeDialog;
 import com.wavvy.dialog.MessageDialog;
 import com.wavvy.listeners.ActionListener;
-import com.wavvy.listeners.LikesListener;
 import com.wavvy.listeners.MessagesListener;
 import com.wavvy.listeners.TickListener;
 import com.wavvy.logic.MessageLogic;
@@ -22,8 +29,6 @@ import com.wavvy.logic.http.Utils;
 import com.wavvy.logic.managers.LikeManager;
 import com.wavvy.logic.managers.MessageManager;
 import com.wavvy.logic.map.MapLogic;
-import com.wavvy.logic.storage.LikeStorage;
-import com.wavvy.logic.storage.UserStorage;
 import com.wavvy.model.Message;
 import com.wavvy.model.SongLocation;
 import com.wavvy.services.GpsService;
@@ -33,15 +38,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
@@ -69,7 +77,6 @@ public class MainActivity extends FragmentActivity {
 	private ImageButton mLike;
 	private EditText mMessageText;
 	private Marker mActiveMarker = null;
-	private int mUserId = -1;
 	private int mNewMessageUserId = -1;
 	
 	@Override
@@ -85,7 +92,15 @@ public class MainActivity extends FragmentActivity {
 		this.mMap.setMyLocationEnabled(true);
 		this.mMap.setOnMarkerClickListener(this.mMarkerClick);
 		this.mMap.setOnMapClickListener(this.mMapClick);
+		
+		this.mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+			
+			@Override
+			public void onCameraChange(CameraPosition position) {
 
+				MainActivity.this.moveToCorner(true);
+			}
+		});
 		// TODO:
 		//new UserStorage(this).setUser(new User(9, "User")); 
 		//
@@ -105,13 +120,37 @@ public class MainActivity extends FragmentActivity {
 			UpdateTimer.setTickListener(this.mTick);
 			
 			this.loadEvents();
-			this.loadUser();
 			this.mLogic.loadPoints(false);
-			
-			this.checkLikes();
 		}
 	}
 
+	private void moveToCorner(boolean fromCameraChange) {
+
+		if (this.mActiveMarker == null)
+			return;
+		
+		if (fromCameraChange) {
+
+			final Projection projection = MainActivity.this.mMap.getProjection();
+			final Point p = projection.toScreenLocation(this.mActiveMarker.getPosition());
+
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			params.leftMargin = p.x;
+			params.topMargin = p.y;
+			
+			((LinearLayout)findViewById(R.id.floating_layer)).setLayoutParams(params);	
+			((LinearLayout)findViewById(R.id.floating_layer)).setVisibility(View.VISIBLE);
+			
+			return;
+		}
+		
+		final Projection projection = MainActivity.this.mMap.getProjection();
+		final Point p = projection.toScreenLocation(this.mActiveMarker.getPosition());
+
+		mMap.animateCamera(CameraUpdateFactory.scrollBy(-(p.x - 40), (p.y - 40)));
+	}
+	
 	@Override
 	protected void onResume() {
 
@@ -181,14 +220,6 @@ public class MainActivity extends FragmentActivity {
 		this.mLike.setOnClickListener(this.mLikeClick);
 	}
 	
-	private void loadUser() {
-	
-		final UserStorage storage = new UserStorage(this);
-		
-		if (storage.isUserExists())
-			this.mUserId = storage.getUser().getId();
-	}
-	
 	private void loadMenuAnimation() {
 
 		this.mMenuAnimation = new SlideAnimation(this, 
@@ -204,40 +235,6 @@ public class MainActivity extends FragmentActivity {
 		this.mMessagesAnimation = new SlideAnimation(this, layout);
 		this.mMessagesAnimation.setDuration(600);
 		this.mMessagesAnimation.collapse(true);
-	}
-	
-	private void checkLikes() {
-	
-		if (this.mUserId == -1)
-			return;
-		
-		final LikeStorage storage = new LikeStorage(this);
-		final int myLikes = storage.getLikesCount();
-
-		new LikeManager(this).likes(this.mUserId, new LikesListener() {
-			
-			@Override
-			public void onSuccess(int likes) {
-
-				if (likes <= myLikes)
-					return; // no new likes
-				
-				// received like!
-				storage.setLikesCount(likes);
-				
-				MainActivity.this.runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						
-						new LikeDialog(MainActivity.this).show();
-					}
-				});
-			}
-			
-			@Override
-			public void onError() { }
-		});
 	}
 	
 	private SongLocation getActiveSongLocation() {
@@ -292,14 +289,13 @@ public class MainActivity extends FragmentActivity {
 			}
 		});
 	}
-	
+
 	private TickListener mTick = new TickListener() {
 		
 		@Override
 		public void onTick() {
 
 			MainActivity.this.mLogic.loadPoints(true);
-			MainActivity.this.checkLikes();
 		}
 	};
 
@@ -313,7 +309,7 @@ public class MainActivity extends FragmentActivity {
 	};
 
 	private OnClickListener mSendMessageClick = new OnClickListener() {
-		
+
 		private void setState(boolean enabled) {
 
 			final MainActivity parent = MainActivity.this;
@@ -330,16 +326,10 @@ public class MainActivity extends FragmentActivity {
 		
 		@Override
 		public void onClick(View v) {
-
+			
 			final MainActivity parent = MainActivity.this;
 			final SongLocation location = parent.getActiveSongLocation();
 			int targetUserId = -1;
-			
-			// set message icon to active marker
-			parent.mActiveMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.icon_message));
-			
-			if (location != null)
-				parent.mLogic.addChatId(location.getId());
 			
 			if (location != null) targetUserId = location.getIdUser();
 			else if (parent.mNewMessageUserId != -1) targetUserId = parent.mNewMessageUserId;
@@ -414,13 +404,14 @@ public class MainActivity extends FragmentActivity {
 		@Override
 		public boolean onMarkerClick(Marker marker) {
 
-			if (marker.getTitle() == null)
-				return false;
+			//if (marker.getTitle() == null)
+			//	return false;
 			
 			MainActivity.this.mMenuAnimation.expand();
 			MainActivity.this.mActiveMarker = marker;
-
-			return false;
+			MainActivity.this.moveToCorner(false);
+			
+			return true;
 		}
 	};
 	

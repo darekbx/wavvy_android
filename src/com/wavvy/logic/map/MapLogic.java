@@ -148,11 +148,11 @@ public class MapLogic {
 	private void zoomToBounds(final LatLng positionA, final LatLng positionB) {
 		
 		final LatLngBounds bounds = new LatLngBounds.Builder()
-	        .include(new LatLng(positionB.latitude, positionB.longitude))
-	        .include(new LatLng(positionA.latitude, positionA.longitude)).build();
+	        .include(new LatLng(positionA.latitude, positionA.longitude))
+	        .include(new LatLng(positionB.latitude, positionB.longitude)).build();
 
-		final int padding = Utils.screenWidth(this.getContext()) / 4;
-		
+		final int padding = Utils.screenWidth(this.getContext()) / 8;
+
 		this.mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
 	}
 	
@@ -182,9 +182,9 @@ public class MapLogic {
 	public Marker addMarker(final SongLocation location) {
 
 		final MarkerOptions markerOptions = new MarkerOptions()
-			.position(location.getPosition())
-			.title(location.toString())
-			.snippet(this.getDistance(location));
+			.position(location.getPosition());
+			//.title(location.toString())
+			//.snippet(this.getDistance(location));
 		
 		final Marker marker = this.mMap.addMarker(markerOptions);
 		int markerIcon;

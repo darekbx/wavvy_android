@@ -12,6 +12,44 @@
         class="com.google.android.gms.maps.SupportMapFragment" />
 
     <LinearLayout 
+        android:id="@+id/floating_layer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@color/blue">
+	    <TextView
+	        android:id="@+id/floating_song"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+	    <TextView
+	        android:id="@+id/floating_distance"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+        <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal">
+	        <ImageButton 
+	            android:id="@+id/floating_message_button"
+	            android:src="@drawable/icon_message"
+	            android:layout_height="wrap_content"
+	            android:layout_width="wrap_content" 
+	            android:scaleType="fitCenter"
+	            android:contentDescription="@string/icon_message" />
+	        <ImageButton 
+	            android:id="@+id/floating_like_button"
+	            android:src="@drawable/icon_like"
+	            android:layout_height="wrap_content"
+	            android:layout_width="wrap_content" 
+	            android:scaleType="fitCenter"
+	            android:contentDescription="@string/icon_like" />
+        </LinearLayout>
+    </LinearLayout>
+    
+    <LinearLayout 
         android:id="@+id/menu_bar"
         android:visibility="visible"
         android:layout_alignParentBottom="true"
@@ -81,5 +119,5 @@
 	    </LinearLayout>
 	    
     </LinearLayout>
-    
+
 </RelativeLayout> 

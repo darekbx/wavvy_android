@@ -35,7 +35,7 @@ public class SongLocation {
 		this.setAlbum(jo.optString(fields[4]));
 		this.setLatitude(jo.optDouble(fields[5]));
 		this.setLongitude(jo.optDouble(fields[6]));
-		this.setIdMessage(jo.optInt(fields[7]));
+		this.setIdMessage(0);//jo.optInt(fields[7]));
 		this.setDate(jo.optString(fields[8]));
 	}
 	
