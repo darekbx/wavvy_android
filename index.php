@@ -158,10 +158,7 @@ class Api {
 
     try {
     
-      $stmt = $this->connection->prepare("
-SELECT s.`id`, s.`id_user`, s.`artist`, s.`title`, s.`album`, s.`latitude`, s.`longitude`, s.`date`, m.`id` AS 'id_message'
-FROM `song` AS s
-LEFT OUTER JOIN `message` AS m ON (m.`target_id_user` = s.`id_user` AND m.`readed` = 0)");
+      $stmt = $this->connection->prepare("SELECT `id`, `id_user`, `artist`, `title`, `album`, `latitude`, `longitude`, `date` FROM `song`");
       $stmt->execute();
       
       $result = $stmt->get_result();
